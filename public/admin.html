@@ -1,0 +1,13 @@
+<!DOCTYPE html>
+<html>
+<head><title>OHC Admin</title></head>
+<body style="background:#0a1428;color:white;font-family:sans-serif;">
+  <h1>OHC Users Admin</h1>
+  <pre id="users"></pre>
+  <script>
+    fetch('/api/admin/users')
+      .then(r => r.json())
+      .then(data => document.getElementById('users').textContent = JSON.stringify(data, null, 2));
+  </script>
+</body>
+</html>

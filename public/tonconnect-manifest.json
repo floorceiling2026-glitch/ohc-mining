@@ -1,0 +1,7 @@
+{
+  "url": "http://localhost:3000",
+  "name": "Original Hustle Coin",
+  "iconUrl": "https://your-domain.com/ohc-logo.png", 
+  "termsOfUseUrl": "http://localhost:3000/terms",
+  "privacyPolicyUrl": "http://localhost:3000/privacy"
+}

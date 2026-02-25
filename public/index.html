@@ -1,0 +1,635 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>ORIGINAL HUSTLE COIN - OHC</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+  <script>
+    tailwind.config = { content: ["*"], theme: { extend: {} } }
+  </script>
+  <script src="https://unpkg.com/@tonconnect/ui@latest/dist/tonconnect-ui.min.js"></script>
+  <script src="https://unpkg.com/tonweb@latest/dist/tonweb.min.js"></script>
+  <style>
+    body { font-family: system-ui, sans-serif; }
+    .nav-link { transition: all 0.3s; }
+    .nav-link:hover { color: #60a5fa; transform: scale(1.05); }
+  </style>
+</head>
+<body class="bg-[#0a1428] text-white min-h-screen">
+
+  <!-- NAVBAR -->
+  <nav class="bg-[#001f3f] sticky top-0 z-50 shadow-xl">
+    <div class="max-w-7xl mx-auto px-6 py-5 flex items-center justify-between">
+      <div class="flex items-center gap-3">
+        <div class="text-4xl font-black text-blue-400 tracking-tighter">OHC</div>
+        <div>
+          <div class="text-xl font-bold">ORIGINAL HUSTLE COIN</div>
+          <div class="text-xs text-blue-300 -mt-1">Proof of Time</div>
+        </div>
+      </div>
+
+      <div class="flex gap-8 text-lg font-medium" id="nav-menu">
+        <a onclick="navigateTo('landing')" class="nav-link cursor-pointer">Home</a>
+        <a onclick="navigateTo('about')" class="nav-link cursor-pointer">About Us</a>
+        <a onclick="navigateTo('dashboard')" class="nav-link cursor-pointer logged-only">Dashboard</a>
+        <a onclick="navigateTo('referral')" class="nav-link cursor-pointer logged-only">Referral</a>
+        <a onclick="navigateTo('levels')" class="nav-link cursor-pointer logged-only">Levels</a>
+        <a onclick="navigateTo('early')" class="nav-link cursor-pointer logged-only">Early Buyers</a>
+      </div>
+
+      <div id="auth-btns">
+        <button onclick="navigateTo('login')" id="login-btn"
+          class="bg-blue-600 hover:bg-blue-700 px-8 py-3 rounded-2xl font-bold">Login / Register</button>
+        <button onclick="logout()" id="logout-btn" class="hidden bg-red-600 hover:bg-red-700 px-8 py-3 rounded-2xl font-bold">Logout</button>
+      </div>
+    </div>
+  </nav>
+
+  <div class="max-w-7xl mx-auto px-6 py-10">
+
+    <!-- LANDING -->
+    <section id="landing" class="page">
+      <div class="text-center py-20">
+        <div class="inline-block bg-gradient-to-r from-blue-500 to-cyan-400 text-8xl font-black px-10 py-6 rounded-3xl mb-6">OHC</div>
+        <h1 class="text-7xl font-black tracking-tighter mb-4">ORIGINAL HUSTLE COIN</h1>
+        <p class="text-3xl text-blue-200">Mine with your time. Get rewarded forever.</p>
+        <button onclick="navigateTo('login')" 
+          class="mt-12 bg-gradient-to-r from-blue-600 to-cyan-500 text-2xl px-16 py-6 rounded-3xl font-bold hover:scale-105 transition">
+          START MINING NOW
+        </button>
+      </div>
+    </section>
+
+    <!-- ABOUT -->
+    <section id="about" class="page hidden">
+      <h1 class="text-5xl font-bold mb-10 text-center">About Us</h1>
+      <div class="max-w-3xl mx-auto bg-[#001f3f] p-10 rounded-3xl leading-relaxed text-lg">
+        <p>Welcome to OHC mining, a decentralized community driven project rewarding your time and growth contributions. It will Harness the power of proof of time in a secure blue chip ecosystem.</p>
+        <p class="mt-6">Tokenomics and transparency, distribution where 60% of supply goes to the community and 20% goes to developers and 10% to investors and the final 10% is sold to early buyers. Supply is 1,000,000,000 coins locked for 6months and unlocked after.</p>
+        <p class="mt-6">Protocol is all coins are evenly distributed based on verified mining time. Coins will be distributed based on mined time, current rank and number of referrals invited and a user will get 15% of every referrals membership fee paid. All liquidity and tokens are locked for 6 months to prevent rugpulls.</p>
+      </div>
+    </section>
+
+    <!-- LOGIN / REGISTER -->
+    <section id="login" class="page hidden">
+      <div class="max-w-lg mx-auto bg-[#001f3f] rounded-3xl p-10">
+        <div class="flex border-b mb-8">
+          <button onclick="switchTab(0)" id="tab0" class="flex-1 py-4 text-xl font-bold border-b-4 border-blue-500">Login</button>
+          <button onclick="switchTab(1)" id="tab1" class="flex-1 py-4 text-xl font-bold">Register</button>
+        </div>
+
+        <!-- LOGIN FORM -->
+        <form id="loginForm" onsubmit="handleLogin(event)">
+          <div class="space-y-8">
+            <div>
+              <label class="block text-sm mb-2 flex items-center gap-2"><i class="fas fa-user"></i> Username</label>
+              <input id="login-username" type="text" required class="w-full bg-[#0a1428] rounded-2xl px-6 py-5 text-lg">
+            </div>
+            <div>
+              <label class="block text-sm mb-2 flex items-center gap-2"><i class="fas fa-lock"></i> Password</label>
+              <input id="login-password" type="password" required class="w-full bg-[#0a1428] rounded-2xl px-6 py-5 text-lg">
+            </div>
+            <button type="submit" class="w-full bg-blue-600 hover:bg-blue-700 py-6 rounded-2xl text-2xl font-bold">LOGIN</button>
+          </div>
+        </form>
+
+        <!-- REGISTER FORM -->
+        <form id="registerForm" onsubmit="handleRegister(event)" class="hidden space-y-8">
+          <div class="grid grid-cols-2 gap-6">
+            <div>
+              <label class="block text-sm mb-2">Username</label>
+              <input id="reg-username" type="text" required class="w-full bg-[#0a1428] rounded-2xl px-6 py-5">
+            </div>
+            <div>
+              <label class="block text-sm mb-2">Email</label>
+              <input id="reg-email" type="email" required class="w-full bg-[#0a1428] rounded-2xl px-6 py-5">
+            </div>
+          </div>
+          <div>
+            <label class="block text-sm mb-2 flex items-center gap-2"><i class="fas fa-wallet"></i> TON Wallet Address</label>
+            <input id="reg-wallet" type="text" required class="w-full bg-[#0a1428] rounded-2xl px-6 py-5">
+          </div>
+          <div>
+            <label class="block text-sm mb-2">Strong Password (Uppercase + 2 numbers)</label>
+            <input id="reg-password" type="password" required class="w-full bg-[#0a1428] rounded-2xl px-6 py-5">
+          </div>
+          <button type="submit" class="w-full bg-gradient-to-r from-blue-600 to-cyan-500 py-6 rounded-2xl text-2xl font-bold">CREATE ACCOUNT & START MINING</button>
+        </form>
+      </div>
+    </section>
+
+    <!-- DASHBOARD -->
+    <section id="dashboard" class="page hidden">
+      <h1 class="text-5xl font-bold mb-2">Welcome back, <span id="dash-username" class="text-blue-400"></span> 👋</h1>
+      <div class="grid grid-cols-1 md:grid-cols-3 gap-8 mt-10">
+        <!-- Total Mining -->
+        <div class="bg-[#001f3f] p-8 rounded-3xl">
+          <div class="flex justify-between items-center mb-4">
+            <div class="text-xl">Total Mining Time</div>
+            <i class="fas fa-clock text-3xl text-blue-400"></i>
+          </div>
+          <div id="total-time" class="font-mono text-7xl font-bold text-cyan-400">00:00:00</div>
+        </div>
+
+        <!-- Session -->
+        <div class="bg-[#001f3f] p-8 rounded-3xl">
+          <div class="text-xl mb-4">Live Session</div>
+          <div id="session-time" class="font-mono text-7xl font-bold text-green-400">00:00:00</div>
+          <div class="text-sm text-green-400 mt-2">⏳ Mining right now...</div>
+        </div>
+
+        <!-- Rank -->
+        <div class="bg-[#001f3f] p-8 rounded-3xl">
+          <div class="text-xl mb-4">Current Rank</div>
+          <div id="current-rank" class="text-7xl font-black text-yellow-400">Iron</div>
+        </div>
+      </div>
+
+      <!-- Countdown -->
+      <div class="mt-12 bg-[#001f3f] p-10 rounded-3xl text-center">
+        <div class="text-2xl mb-4">6-Month Lock Ends In</div>
+        <div id="countdown" class="font-mono text-6xl font-bold text-blue-400">00d 00h 00m 00s</div>
+      </div>
+
+      <!-- Claim -->
+      <div class="mt-12 text-center">
+        <button onclick="handleClaim()" id="claim-btn" 
+          class="bg-green-600 hover:bg-green-700 disabled:bg-gray-600 text-3xl px-20 py-8 rounded-3xl font-bold">
+          CLAIM MY OHC COINS
+        </button>
+        <p id="claim-status" class="mt-6 text-xl"></p>
+      </div>
+    </section>
+
+    <!-- REFERRAL -->
+    <section id="referral" class="page hidden">
+      <h1 class="text-5xl font-bold mb-10">Referral Center</h1>
+      <div class="bg-[#001f3f] p-10 rounded-3xl max-w-2xl mx-auto text-center">
+        <div class="text-8xl mb-6">👥</div>
+        <div class="text-6xl font-bold mb-2" id="ref-count">0</div>
+        <div class="text-2xl">People referred</div>
+        
+        <div class="mt-12">
+          <p class="text-xl mb-4">Your unique link</p>
+          <input id="ref-link" readonly class="bg-[#0a1428] w-full p-6 rounded-2xl text-lg font-mono">
+          <button onclick="copyRefLink()" 
+            class="mt-4 bg-blue-600 hover:bg-blue-700 px-10 py-4 rounded-2xl">Copy Link</button>
+        </div>
+        
+        <p class="mt-16 text-xl text-blue-300">Invite friends → Earn 15% of every membership fee they pay!<br>More referrals = Higher rank + More coins</p>
+      </div>
+    </section>
+
+<!-- LEVELS -->
+<section id="levels" class="page hidden">
+  <h1 class="text-5xl font-bold mb-10">Your Levels & Ranks</h1>
+
+  <div id="my-level-card" class="bg-[#001f3f] p-10 rounded-3xl text-center mb-12"></div>
+
+  <!-- UPGRADE SECTION -->
+  <div id="upgrade-section" class="bg-[#001f3f] p-10 rounded-3xl mb-12 hidden">
+    <h2 class="text-4xl font-bold mb-6 text-center text-yellow-300">Upgrade Your Level with TON</h2>
+    
+    <div class="text-xl mb-6 text-center">
+      Current Paid: <span id="current-paid" class="font-bold text-blue-300">0 KSH</span><br>
+      Next Level Fee: <span id="next-fee" class="font-bold text-green-400">0 KSH</span>
+    </div>
+
+    <div class="text-center mb-8">
+      <button id="connect-ton-btn" 
+        class="bg-blue-600 hover:bg-blue-700 px-12 py-5 rounded-2xl text-2xl font-bold">
+        Connect TON Wallet
+      </button>
+      <button id="upgrade-btn" disabled
+        class="bg-green-600 hover:bg-green-700 px-12 py-5 rounded-2xl text-2xl font-bold hidden">
+        Upgrade Now (Pay with TON)
+      </button>
+    </div>
+
+    <p id="ton-status" class="text-center text-lg mt-4"></p>
+    <p class="text-sm text-gray-400 text-center mt-4">
+      Note: Approximate conversion 1 KSH ≈ 0.00015 TON (rates change - check real price)
+    </p>
+  </div>
+
+  <table class="w-full text-left">
+    <thead class="bg-[#001f3f]">
+      <tr class="border-b border-blue-900">
+        <th class="p-6">Level</th>
+        <th class="p-6">Name</th>
+        <th class="p-6">Referrals Needed</th>
+        <th class="p-6">Entry Fee (KSH)</th>
+      </tr>
+    </thead>
+    <tbody id="levels-tbody" class="text-lg"></tbody>
+  </table>
+</section>
+    <!-- EARLY BUYERS -->
+    <section id="early" class="page hidden">
+      <h1 class="text-5xl font-bold mb-10">Early Buyers - 100M OHC</h1>
+      <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
+        <div class="bg-[#001f3f] p-10 rounded-3xl">
+          <div class="text-2xl mb-4">Available for Early Buyers</div>
+          <div id="early-avail" class="text-7xl font-bold text-cyan-400">100,000,000</div>
+          <div class="text-2xl text-blue-300">OHC @ 1 KSH each</div>
+          
+          <div class="mt-10">
+            <input id="buy-amount" type="number" placeholder="How many KSH?" 
+              class="w-full bg-[#0a1428] p-6 rounded-2xl text-2xl">
+            <button onclick="buyEarly()" 
+              class="mt-6 w-full bg-gradient-to-r from-cyan-500 to-blue-600 py-8 text-3xl rounded-3xl font-bold">BUY NOW</button>
+          </div>
+        </div>
+
+        <div class="bg-[#001f3f] p-10 rounded-3xl">
+          <div class="text-2xl mb-4">Community Supply Remaining</div>
+          <div id="comm-remain" class="text-7xl font-bold text-orange-400">600,000,000</div>
+          <div class="mt-4 text-sm">3,500,000 OHC mined &amp; distributed every day</div>
+          <div class="text-8xl mt-12">⛏️</div>
+        </div>
+      </div>
+    </section>
+
+  </div>
+
+  <script>
+    // =============== ALL FRONTEND LOGIC ===============
+    let currentUser = null;
+    let sessionSeconds = 0;
+    let timer = null;
+    let lockEndDate = null;
+
+    const pages = {
+      landing: document.getElementById('landing'),
+      about: document.getElementById('about'),
+      login: document.getElementById('login'),
+      dashboard: document.getElementById('dashboard'),
+      referral: document.getElementById('referral'),
+      levels: document.getElementById('levels'),
+      early: document.getElementById('early')
+    };
+
+    function navigateTo(page) {
+      if (['dashboard','referral','levels','early'].includes(page) && !currentUser) {
+        alert("Please login first!");
+        navigateTo('login');
+        return;
+      }
+      Object.values(pages).forEach(p => p.classList.add('hidden'));
+      pages[page].classList.remove('hidden');
+
+      if (page === 'dashboard') startLiveTimer();
+      if (page === 'referral') loadReferral();
+      if (page === 'levels') {
+        loadLevels();
+        loadUpgradeInfo();
+      }
+      if (page === 'early') loadEarlyPage();
+    }
+
+    function switchTab(n) {
+      document.getElementById('loginForm').classList.toggle('hidden', n === 1);
+      document.getElementById('registerForm').classList.toggle('hidden', n === 0);
+      document.getElementById('tab0').classList.toggle('border-b-4', n === 0);
+      document.getElementById('tab1').classList.toggle('border-b-4', n === 1);
+    }
+
+    // Login
+    async function handleLogin(e) {
+      e.preventDefault();
+      const username = document.getElementById('login-username').value;
+      const password = document.getElementById('login-password').value;
+
+      const res = await fetch('/api/login', {
+        method: 'POST',
+        headers: {'Content-Type': 'application/json'},
+        body: JSON.stringify({ username, password })
+      });
+      const data = await res.json();
+
+      if (data.success) {
+        currentUser = data.user;
+        localStorage.setItem('ohcUser', JSON.stringify(currentUser));
+        document.getElementById('login-btn').classList.add('hidden');
+        document.getElementById('logout-btn').classList.remove('hidden');
+        navigateTo('dashboard');
+      } else alert(data.error);
+    }
+
+    // Register
+    async function handleRegister(e) {
+      e.preventDefault();
+      const username = document.getElementById('reg-username').value;
+      const email = document.getElementById('reg-email').value;
+      const wallet = document.getElementById('reg-wallet').value;
+      const password = document.getElementById('reg-password').value;
+
+      const ref = new URLSearchParams(window.location.search).get('ref') || '';
+
+      const res = await fetch('/api/register', {
+        method: 'POST',
+        headers: {'Content-Type': 'application/json'},
+        body: JSON.stringify({ username, email, password, wallet, ref })
+      });
+      const data = await res.json();
+
+      if (data.success) {
+        currentUser = data.user;
+        localStorage.setItem('ohcUser', JSON.stringify(currentUser));
+        alert('Account created! Welcome to OHC 🚀');
+        navigateTo('dashboard');
+      } else alert(data.error);
+    }
+
+    function logout() {
+      localStorage.removeItem('ohcUser');
+      currentUser = null;
+      document.getElementById('login-btn').classList.remove('hidden');
+      document.getElementById('logout-btn').classList.add('hidden');
+      navigateTo('landing');
+      if (timer) clearInterval(timer);
+    }
+
+    // Load saved user
+    function loadSavedUser() {
+      const saved = localStorage.getItem('ohcUser');
+      if (saved) {
+        currentUser = JSON.parse(saved);
+        document.getElementById('login-btn').classList.add('hidden');
+        document.getElementById('logout-btn').classList.remove('hidden');
+        navigateTo('dashboard');
+      } else {
+        navigateTo('landing');
+      }
+    }
+
+    // Live mining timer
+    function startLiveTimer() {
+      if (timer) clearInterval(timer);
+      sessionSeconds = 0;
+      updateDisplays();
+
+      timer = setInterval(() => {
+        sessionSeconds++;
+        updateDisplays();
+
+        if (sessionSeconds % 60 === 0) {
+          fetch('/api/update-mining', {
+            method: 'POST',
+            headers: {'Content-Type': 'application/json'},
+            body: JSON.stringify({ userId: currentUser.id, seconds: 60 })
+          }).then(() => refreshUserData());
+        }
+      }, 1000);
+    }
+
+    async function refreshUserData() {
+      const res = await fetch(`/api/user/${currentUser.id}`);
+      const fresh = await res.json();
+      currentUser = fresh;
+      localStorage.setItem('ohcUser', JSON.stringify(currentUser));
+      updateDisplays();
+    }
+
+    function updateDisplays() {
+      // Total time
+      let totalSec = currentUser.mining_time + sessionSeconds;
+      let h = Math.floor(totalSec / 3600).toString().padStart(2, '0');
+      let m = Math.floor((totalSec % 3600) / 60).toString().padStart(2, '0');
+      let s = (totalSec % 60).toString().padStart(2, '0');
+      document.getElementById('total-time').textContent = `${h}:${m}:${s}`;
+
+      // Session
+      h = Math.floor(sessionSeconds / 3600).toString().padStart(2, '0');
+      m = Math.floor((sessionSeconds % 3600) / 60).toString().padStart(2, '0');
+      s = (sessionSeconds % 60).toString().padStart(2, '0');
+      document.getElementById('session-time').textContent = `${h}:${m}:${s}`;
+
+      // Rank
+      const lvl = getLevel(currentUser.referrals);
+      document.getElementById('current-rank').textContent = lvl.name;
+      document.getElementById('dash-username').textContent = currentUser.username;
+    }
+
+    // Countdown
+    async function loadCountdown() {
+      const g = await (await fetch('/api/globals')).json();
+      const start = new Date(g.start_date);
+      lockEndDate = new Date(start.getTime() + 183 * 86400000);
+
+      setInterval(() => {
+        const diff = lockEndDate - Date.now();
+        if (diff <= 0) {
+          document.getElementById('countdown').innerHTML = '🔓 LOCK ENDED - CLAIM NOW!';
+          document.getElementById('claim-btn').disabled = false;
+          return;
+        }
+        const d = Math.floor(diff / 86400000);
+        const h = Math.floor((diff % 86400000) / 3600000);
+        const m = Math.floor((diff % 3600000) / 60000);
+        const s = Math.floor((diff % 60000) / 1000);
+        document.getElementById('countdown').textContent = `${d}d ${h}h ${m}m ${s}s`;
+      }, 1000);
+    }
+
+    // Claim
+    async function handleClaim() {
+      const res = await fetch('/api/claim', {
+        method: 'POST',
+        headers: {'Content-Type': 'application/json'},
+        body: JSON.stringify({ userId: currentUser.id })
+      });
+      const data = await res.json();
+      document.getElementById('claim-status').innerHTML = 
+        data.success ? `<span class="text-green-400">${data.message}</span>` : 
+                       `<span class="text-red-400">${data.error}</span>`;
+    }
+
+    // Referral
+    function loadReferral() {
+      document.getElementById('ref-count').textContent = currentUser.referrals;
+      const link = `${window.location.origin}?ref=${currentUser.username}`;
+      document.getElementById('ref-link').value = link;
+    }
+
+    function copyRefLink() {
+      document.getElementById('ref-link').select();
+      document.execCommand('copy');
+      alert('✅ Referral link copied!');
+    }
+
+    // Levels
+    function loadLevels() {
+      const lvl = getLevel(currentUser.referrals);
+      document.getElementById('my-level-card').innerHTML = `
+        <div class="text-6xl font-black text-yellow-400">${lvl.name}</div>
+        <div class="text-2xl mt-4">Level ${lvl.num} • ${currentUser.referrals} referrals</div>
+      `;
+
+      const list = [
+        {n:1, name:'Iron', ref:0, fee:300},
+        {n:2, name:'Bronze', ref:5, fee:500},
+        {n:3, name:'Silver', ref:10, fee:1000},
+        {n:4, name:'Gold', ref:15, fee:2000},
+        {n:5, name:'Platinum', ref:20, fee:5000},
+        {n:6, name:'Diamond', ref:25, fee:7500},
+        {n:7, name:'Conqueror', ref:50, fee:10000}
+      ];
+
+      let html = '';
+      list.forEach(l => {
+        html += `<tr class="border-b border-blue-900 hover:bg-blue-950">
+          <td class="p-6">${l.n}</td>
+          <td class="p-6 font-bold">${l.name}</td>
+          <td class="p-6">${l.ref}</td>
+          <td class="p-6">${l.fee} KSH</td>
+        </tr>`;
+      });
+      document.getElementById('levels-tbody').innerHTML = html;
+      loadUpgradeInfo();
+    }
+
+    function getLevel(refs) {
+      if (refs >= 50) return {name: 'Conqueror', num: 7};
+      if (refs >= 25) return {name: 'Diamond', num: 6};
+      if (refs >= 20) return {name: 'Platinum', num: 5};
+      if (refs >= 15) return {name: 'Gold', num: 4};
+      if (refs >= 10) return {name: 'Silver', num: 3};
+      if (refs >= 5)  return {name: 'Bronze', num: 2};
+      return {name: 'Iron', num: 1};
+    }
+
+    // Early Buyers
+    async function loadEarlyPage() {
+      const g = await (await fetch('/api/globals')).json();
+      document.getElementById('early-avail').textContent = parseFloat(g.early_remaining).toLocaleString();
+      document.getElementById('comm-remain').textContent = parseFloat(g.community_remaining).toLocaleString();
+    }
+
+    async function buyEarly() {
+      const amount = parseFloat(document.getElementById('buy-amount').value);
+      if (!amount) return alert('Enter amount in KSH');
+
+      const res = await fetch('/api/buy-early', {
+        method: 'POST',
+        headers: {'Content-Type': 'application/json'},
+        body: JSON.stringify({ kshAmount: amount })
+      });
+      const data = await res.json();
+
+      if (data.success) {
+        alert(`🎉 Bought ${data.bought} OHC!`);
+        loadEarlyPage();
+      } else alert(data.error);
+    }
+
+    // Init
+    window.onload = () => {
+      loadSavedUser();
+      if (currentUser) loadCountdown();
+    };
+
+    // Before closing tab - save last seconds
+    window.addEventListener('beforeunload', () => {
+      if (sessionSeconds > 0 && currentUser) {
+        fetch('/api/update-mining', {
+          method: 'POST',
+          headers: {'Content-Type': 'application/json'},
+          body: JSON.stringify({ userId: currentUser.id, seconds: sessionSeconds })
+        });
+      }
+    });
+  
+    // ====================== TON CONNECT + UPGRADE LOGIC ======================
+
+    const tonConnectUI = new TON_CONNECT_UI.TonConnectUI({
+      manifestUrl: '/tonconnect-manifest.json',
+      buttonRootId: 'connect-ton-btn'   // optional - auto creates button
+    });
+
+    let tonConnected = false;
+    let tonAddress = null;
+
+    tonConnectUI.onStatusChange(wallet => {
+      if (wallet?.connected) {
+        tonConnected = true;
+        tonAddress = wallet.account?.address;
+        document.getElementById('ton-status').innerHTML = 
+          `<span class="text-green-400">Connected: ${tonAddress.slice(0,6)}...${tonAddress.slice(-4)}</span>`;
+        document.getElementById('connect-ton-btn').classList.add('hidden');
+        document.getElementById('upgrade-btn').classList.remove('hidden');
+      } else {
+        tonConnected = false;
+        document.getElementById('ton-status').textContent = '';
+        document.getElementById('connect-ton-btn').classList.remove('hidden');
+        document.getElementById('upgrade-btn').classList.add('hidden');
+      }
+    });
+
+    // Load upgrade info when entering Levels page
+    async function loadUpgradeInfo() {
+      if (!currentUser) return;
+
+      const res = await fetch(`/api/next-level-fee/${currentUser.id}`);
+      const data = await res.json();
+
+      if (data.canUpgrade) {
+        document.getElementById('upgrade-section').classList.remove('hidden');
+        document.getElementById('current-paid').textContent = `${data.currentFeePaid} KSH`;
+        document.getElementById('next-fee').textContent = `${data.nextLevelFeeKSH} KSH`;
+
+        document.getElementById('upgrade-btn').onclick = async () => {
+          if (!tonConnected) {
+            alert("Please connect TON wallet first!");
+            return;
+          }
+
+          const amountKSH = data.nextLevelFeeKSH;
+          const tonAmount = (amountKSH * 0.00015).toFixed(6); // rough conversion example!
+
+          try {
+            const transaction = {
+              validUntil: Math.floor(Date.now() / 1000) + 360,
+              messages: [
+                {
+                  address: "UQAPhkqLn3j7vfVwriUDNlGWBW7x4LsuqgfWO8u_wHObTMSq",
+                  amount: TonWeb.utils.toNano(tonAmount).toString(), // in nanotons
+                  payload: TonWeb.utils.toBytes(`Upgrade to level for user ${currentUser.username}`)
+                }
+              ]
+            };
+
+            document.getElementById('ton-status').textContent = 'Waiting for transaction...';
+
+            await tonConnectUI.sendTransaction(transaction);
+
+            // After success (user signed & sent) → tell backend
+            await fetch('/api/upgrade-level', {
+              method: 'POST',
+              headers: {'Content-Type': 'application/json'},
+              body: JSON.stringify({ userId: currentUser.id, paidKSH: amountKSH })
+            });
+
+            document.getElementById('ton-status').innerHTML = 
+              `<span class="text-green-400">Upgrade successful! Refresh page.</span>`;
+
+            // Refresh user data & UI
+            await refreshUserData();
+            loadLevels();       // reload levels card
+            loadUpgradeInfo();  // hide or update upgrade section
+
+          } catch (err) {
+            console.error(err);
+            document.getElementById('ton-status').innerHTML = 
+              `<span class="text-red-400">Transaction failed or cancelled.</span>`;
+          }
+        };
+      } else {
+        document.getElementById('upgrade-section').classList.add('hidden');
+      }
+    }
+  </script>
+</body>
+</html>
