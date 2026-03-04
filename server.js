@@ -10,6 +10,11 @@ const cors = require('cors');
 const app = express();
 const port = 3000;
 
+// ====================== SUPPLY REDUCTION CONSTANTS ======================
+// Daily supply deduction amounts (hidden from frontend)
+const EARLY_DAILY_SUB = parseInt(process.env.EARLY_DAILY_SUB || 2000000);
+const COMM_DAILY_SUB = parseInt(process.env.COMM_DAILY_SUB || 3500000);
+
 app.use(cors());
 app.use(bodyParser.json());
 app.use(express.static('public'));   // serves your HTML + JS
@@ -18,6 +23,7 @@ app.use(express.static('public'));   // serves your HTML + JS
 const db = new sqlite3.Database('./ohc.db');
 
 db.serialize(() => {
+
   // Users table
   db.run(`CREATE TABLE IF NOT EXISTS users (
     id INTEGER PRIMARY KEY AUTOINCREMENT,
@@ -29,8 +35,24 @@ db.serialize(() => {
     referrals INTEGER DEFAULT 0,
     membership_paid REAL DEFAULT 0,
     referral_earnings REAL DEFAULT 0,
+    bought_coins REAL DEFAULT 0,
+    referrer_id INTEGER DEFAULT NULL,
     joined_at DATETIME DEFAULT CURRENT_TIMESTAMP
   )`);
+
+  // Ensure bought_coins column exists (for older databases)
+  db.run(`ALTER TABLE users ADD COLUMN bought_coins REAL DEFAULT 0`, (err) => {
+    if (err && !err.message.includes("duplicate column")) {
+      console.error("Error adding bought_coins column:", err.message);
+    }
+  });
+
+  // Ensure referrer_id column exists (for older databases)
+  db.run(`ALTER TABLE users ADD COLUMN referrer_id INTEGER DEFAULT NULL`, (err) => {
+    if (err && !err.message.includes("duplicate column")) {
+      console.error("Error adding referrer_id column:", err.message);
+    }
+  });
 
   // Global settings (early buyers, community supply, dates)
   db.run(`CREATE TABLE IF NOT EXISTS globals (
@@ -39,10 +61,12 @@ db.serialize(() => {
   )`);
 
   const now = new Date().toISOString();
+
   db.run(`INSERT OR IGNORE INTO globals (key, value) VALUES ('early_remaining', '100000000')`);
   db.run(`INSERT OR IGNORE INTO globals (key, value) VALUES ('community_remaining', '600000000')`);
   db.run(`INSERT OR IGNORE INTO globals (key, value) VALUES ('last_update', '${now}')`);
   db.run(`INSERT OR IGNORE INTO globals (key, value) VALUES ('start_date', '${now}')`);
+
 });
 
 // Helper function for levels (same on frontend)
@@ -70,30 +94,42 @@ app.post('/api/register', (req, res) => {
   bcrypt.hash(password, 10, (err, hashedPass) => {
     if (err) return res.status(500).json({ error: 'Server error' });
 
-    db.run(`INSERT INTO users (username, email, password, wallet, membership_paid) 
-            VALUES (?, ?, ?, ?, 300)`, 
-      [username, email, hashedPass, wallet], 
-      function(err) {
-        if (err) {
-          if (err.message.includes('UNIQUE')) return res.status(400).json({ error: 'Username or email already taken' });
-          return res.status(500).json({ error: err.message });
-        }
+    // If ref provided, find the referrer's ID first
+    let referrerId = null;
+    
+    const insertUser = () => {
+      db.run(`INSERT INTO users (username, email, password, wallet, membership_paid, referrer_id) 
+              VALUES (?, ?, ?, ?, 300, ?)`, 
+        [username, email, hashedPass, wallet, referrerId], 
+        function(err) {
+          if (err) {
+            if (err.message.includes('UNIQUE')) return res.status(400).json({ error: 'Username or email already taken' });
+            return res.status(500).json({ error: err.message });
+          }
 
-        const userId = this.lastID;
+          const userId = this.lastID;
 
-        // Handle referral
-        if (ref) {
-          db.get('SELECT id FROM users WHERE username = ?', [ref], (err2, row) => {
-            if (row) {
-              db.run('UPDATE users SET referrals = referrals + 1 WHERE id = ?', [row.id]);
-              db.run('UPDATE users SET referral_earnings = referral_earnings + 45 WHERE id = ?', [row.id]); // 15% of 300 KSH
-            }
-            res.json({ success: true, user: { id: userId, username, email, wallet, mining_time: 0, referrals: 0, membership_paid: 300, referral_earnings: 0 }});
-          });
-        } else {
-          res.json({ success: true, user: { id: userId, username, email, wallet, mining_time: 0, referrals: 0, membership_paid: 300, referral_earnings: 0 }});
+          // Update referrer's stats if applicable
+          if (referrerId) {
+            db.run('UPDATE users SET referrals = referrals + 1 WHERE id = ?', [referrerId]);
+            db.run('UPDATE users SET referral_earnings = referral_earnings + 45 WHERE id = ?', [referrerId]); // 15% of 300 KSH
+          }
+
+          res.json({ success: true, user: { id: userId, username, email, wallet, mining_time: 0, referrals: 0, membership_paid: 300, referral_earnings: 0, bought_coins: 0, referrer_id: referrerId }});
+        });
+    };
+
+    // If ref code provided, lookup referrer first
+    if (ref) {
+      db.get('SELECT id FROM users WHERE username = ?', [ref], (err2, row) => {
+        if (row) {
+          referrerId = row.id;
         }
+        insertUser();
       });
+    } else {
+      insertUser();
+    }
   });
 });
 
@@ -118,12 +154,38 @@ app.post('/api/update-mining', (req, res) => {
   });
 });
 
+// Beacon endpoint for saving mining time when tab closes
+app.post('/api/update-mining-beacon', (req, res) => {
+  const body = typeof req.body === 'string' ? JSON.parse(req.body) : req.body;
+  const { userId, seconds } = body;
+  if (userId && seconds) {
+    db.run('UPDATE users SET mining_time = mining_time + ? WHERE id = ?', [seconds, userId]);
+  }
+  res.status(204).send();
+});
+
 // Get fresh user data
 app.get('/api/user/:id', (req, res) => {
-  db.get('SELECT id, username, email, wallet, mining_time, referrals, membership_paid, referral_earnings FROM users WHERE id = ?', 
-    [req.params.id], (err, user) => {
+  db.get(
+    'SELECT id, username, email, wallet, mining_time, referrals, membership_paid, referral_earnings, bought_coins FROM users WHERE id = ?',
+    [req.params.id],
+    (err, user) => {
+      if (err) return res.status(500).json({ error: err.message });
       res.json(user);
-    });
+    }
+  );
+});
+
+// Get list of users referred by a specific user
+app.get('/api/referrals/:userId', (req, res) => {
+  db.all(
+    'SELECT username, joined_at FROM users WHERE referrer_id = ?',
+    [req.params.userId],
+    (err, rows) => {
+      if (err) return res.json([]);
+      res.json(rows || []);
+    }
+  );
 });
 
 // Globals (early buyers + community supply + daily subtraction)
@@ -139,8 +201,8 @@ app.get('/api/globals', (req, res) => {
     if (days > 0) {
       let early = parseFloat(g.early_remaining);
       let comm = parseFloat(g.community_remaining);
-      early = Math.max(0, early - days * 2000000);
-      comm = Math.max(0, comm - days * 3500000);
+      early = Math.max(0, early - days * EARLY_DAILY_SUB);
+      comm = Math.max(0, comm - days * COMM_DAILY_SUB);
 
       db.run('UPDATE globals SET value = ? WHERE key = ?', [early.toString(), 'early_remaining']);
       db.run('UPDATE globals SET value = ? WHERE key = ?', [comm.toString(), 'community_remaining']);
@@ -166,6 +228,39 @@ app.post('/api/buy-early', (req, res) => {
     const newRem = rem - coins;
     db.run('UPDATE globals SET value = ? WHERE key = "early_remaining"', [newRem.toString()]);
     res.json({ success: true, bought: coins, remaining: newRem });
+  });
+});
+
+// Confirm early buy after TON transaction
+app.post('/api/confirm-buy', (req, res) => {
+  const { userId, coins } = req.body;
+
+  if (!userId || !coins) {
+    return res.status(400).json({ error: 'Missing userId or coins' });
+  }
+
+  db.get('SELECT bought_coins FROM users WHERE id = ?', [userId], (err, row) => {
+    if (err) {
+      return res.status(500).json({ error: err.message });
+    }
+
+    if (!row) {
+      return res.status(404).json({ error: 'User not found' });
+    }
+
+    const newTotal = (row.bought_coins || 0) + parseFloat(coins);
+
+    db.run(
+      'UPDATE users SET bought_coins = ? WHERE id = ?',
+      [newTotal, userId],
+      function(updateErr) {
+        if (updateErr) {
+          return res.status(500).json({ error: updateErr.message });
+        }
+
+        res.json({ success: true, newBought: newTotal });
+      }
+    );
   });
 });
 
@@ -237,6 +332,31 @@ app.post('/api/upgrade-level', (req, res) => {
     });
   });
 });
+
+// Change password
+app.post('/api/change-password', (req, res) => {
+  const { userId, newPassword } = req.body;
+
+  if (!newPassword) {
+    return res.status(400).json({ error: 'Password required' });
+  }
+
+  if (!/[A-Z]/.test(newPassword) || (newPassword.match(/\d/g) || []).length < 2 || newPassword.length < 8) {
+    return res.status(400).json({ error: 'Password needs 1 uppercase, 2 numbers, 8+ characters' });
+  }
+
+  bcrypt.hash(newPassword, 10, (err, hashedPass) => {
+    if (err) return res.status(500).json({ error: 'Server error' });
+
+    db.run('UPDATE users SET password = ? WHERE id = ?', [hashedPass, userId], function(updateErr) {
+      if (updateErr) {
+        return res.status(500).json({ error: 'Error updating password' });
+      }
+      res.json({ success: true, message: 'Password updated successfully' });
+    });
+  });
+});
+
 app.listen(process.env.PORT || 3000, () => {
   console.log(`🚀 OHC App running on port ${process.env.PORT || 3000}`);
 });
