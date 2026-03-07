@@ -753,7 +753,8 @@ async function buyEarly() {
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({
         userId: currentUser.id,
-        kshAmount: amountKES
+        kshAmount: amountKES,
+        txHash: txHash
       })
     });
 
@@ -881,7 +882,8 @@ async function buyEarly() {
 
             document.getElementById('ton-status').textContent = 'Waiting for transaction...';
 
-            await tonConnectUI.sendTransaction(transaction);
+            const txResult = await tonConnectUI.sendTransaction(transaction);
+            const txHash = txResult?.boc || null;
 
             // After success (user signed & sent) → tell backend
             await fetch('/api/upgrade-level', {
