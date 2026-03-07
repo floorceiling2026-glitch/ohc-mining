@@ -728,7 +728,6 @@ async function buyEarly() {
 
     // get current TON price
     const tonPriceKES = await getTonPriceKES();
-
     const tonAmount = (amountKES / tonPriceKES).toFixed(6);
 
     const transaction = {
@@ -744,8 +743,15 @@ async function buyEarly() {
       ]
     };
 
-    // open wallet and send payment
-    await tonConnectUI.sendTransaction(transaction);
+    // send transaction and capture the result
+    const txResult = await tonConnectUI.sendTransaction(transaction);
+
+    // extract transaction hash (Boc)
+    const txHash = txResult?.boc || null;
+
+    if (!txHash) {
+      return alert("Transaction failed: no hash returned.");
+    }
 
     // after payment succeeds update backend
     const res = await fetch('/api/confirm-buy', {
@@ -772,7 +778,6 @@ async function buyEarly() {
   } catch (err) {
 
     console.error(err);
-
     alert('Transaction cancelled or failed.');
 
   }
