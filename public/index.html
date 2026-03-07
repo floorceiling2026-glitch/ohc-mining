@@ -357,6 +357,40 @@
     let timer = null;
     let lockEndDate = null;
 
+    // TON Connect globals (initialized later)
+    let tonConnectUI = null;
+    let tonConnected = false;
+    let tonAddress = null;
+
+    // initialize TON Connect UI and set up status handling
+    function initTonConnect() {
+      tonConnectUI = new TON_CONNECT_UI.TonConnectUI({
+        manifestUrl: 'https://ohc-hustle.onrender.com/tonconnect-manifest.json',
+        buttonRootId: 'connect-ton-btn'
+      });
+
+      tonConnectUI.onStatusChange(wallet => {
+        if (wallet?.connected) {
+          tonConnected = true;
+          tonAddress = wallet.account?.address;
+          document.getElementById('ton-status').innerHTML =
+            `<span class="text-green-400">Connected: ${tonAddress.slice(0,6)}...${tonAddress.slice(-4)}</span>`;
+          document.getElementById('connect-ton-btn').parentElement.classList.add('hidden');
+          document.getElementById('upgrade-btn').classList.remove('hidden');
+        } else {
+          tonConnected = false;
+          document.getElementById('ton-status').textContent = '';
+          document.getElementById('connect-ton-btn').parentElement.classList.remove('hidden');
+          document.getElementById('upgrade-btn').classList.add('hidden');
+        }
+      });
+
+      // custom button still needs to open modal explicitly
+      document.getElementById('connect-ton-btn').addEventListener('click', () => {
+        tonConnectUI.openModal();
+      });
+    }
+
     const pages = {
       landing: document.getElementById('landing'),
       about: document.getElementById('about'),
@@ -780,6 +814,8 @@ async function buyEarly() {
 
     // Init
     window.onload = () => {
+      // initialize TON Connect UI before any interaction
+      initTonConnect();
       loadSavedUser();
     };
 
@@ -791,39 +827,7 @@ async function buyEarly() {
     });
   
     // ====================== TON CONNECT + UPGRADE LOGIC ======================
-
-    // Removed buttonRootId so it doesn't overwrite your custom Tailwind button
-    const tonConnectUI = new TON_CONNECT_UI.TonConnectUI({
-      manifestUrl: '/tonconnect-manifest.json'
-    });
-
-    // Manually open the modal when your custom responsive button is clicked
-    document.getElementById('connect-ton-btn').addEventListener('click', () => {
-      tonConnectUI.openModal();
-    });
-
-    let tonConnected = false;
-    let tonAddress = null;
-
-    tonConnectUI.onStatusChange(wallet => {
-      if (wallet?.connected) {
-        tonConnected = true;
-        tonAddress = wallet.account?.address;
-        document.getElementById('ton-status').innerHTML = 
-          `<span class="text-green-400">Connected: ${tonAddress.slice(0,6)}...${tonAddress.slice(-4)}</span>`;
-        
-        // Hide the connect button wrapper and show the upgrade button
-        document.getElementById('connect-ton-btn').parentElement.classList.add('hidden');
-        document.getElementById('upgrade-btn').classList.remove('hidden');
-      } else {
-        tonConnected = false;
-        document.getElementById('ton-status').textContent = '';
-        
-        // Show the connect button wrapper and hide the upgrade button
-        document.getElementById('connect-ton-btn').parentElement.classList.remove('hidden');
-        document.getElementById('upgrade-btn').classList.add('hidden');
-      }
-    });
+    // Initialization moved into initTonConnect(); see above.
 
     // Load upgrade info when entering Levels page
     async function loadUpgradeInfo() {
