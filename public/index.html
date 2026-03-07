@@ -697,10 +697,26 @@ function updateDisplays() {
       document.getElementById('early-avail').textContent = parseFloat(g.early_remaining).toLocaleString();
       document.getElementById('comm-remain').textContent = parseFloat(g.community_remaining).toLocaleString();
     }
-async function buyEarly() {
-  const amount = parseFloat(document.getElementById('buy-amount').value);
 
-  if (!amount || amount <= 0) {
+    // helper that converts KES price to TON via CoinGecko
+    async function getTonPriceKES() {
+      const res = await fetch(
+        "https://api.coingecko.com/api/v3/simple/price?ids=the-open-network&vs_currencies=kes"
+      );
+      const data = await res.json();
+      return data["the-open-network"].kes;
+    }
+
+async function buyEarly() {
+  // require a connected TON wallet before doing anything else
+  if (!tonConnected) {
+    alert("Please connect your TON wallet first");
+    return;
+  }
+
+  const amountKES = parseFloat(document.getElementById('buy-amount').value);
+
+  if (!amountKES || amountKES <= 0) {
     return alert('Enter a valid amount in KSH');
   }
 
@@ -709,13 +725,32 @@ async function buyEarly() {
   }
 
   try {
-    // Step 1: Add coins to user first
+    // calculate TON amount and send on‑chain payment
+    const tonPriceKES = await getTonPriceKES();
+    const tonAmount = amountKES / tonPriceKES;
+
+    const transaction = {
+      validUntil: Math.floor(Date.now() / 1000) + 360,
+      messages: [
+        {
+          address: "UQAPhkqLn3j7vfVwriUDNlGWBW7x4LsuqgfWO8u_wHObTMSq", // replace with your receiving wallet
+          amount: TonWeb.utils.toNano(tonAmount).toString(),
+          payload: TonWeb.utils.bytesToBase64(
+            new TextEncoder().encode(`Buy OHC for ${amountKES} KSH`)
+          )
+        }
+      ]
+    };
+
+    await tonConnectUI.sendTransaction(transaction);
+
+    // only after on‑chain transfer succeeds do we update our backend
     const confirmRes = await fetch('/api/confirm-buy', {
       method: 'POST',
       headers: {'Content-Type': 'application/json'},
       body: JSON.stringify({
         userId: currentUser.id,
-        coins: amount
+        coins: amountKES
       })
     });
 
@@ -725,11 +760,10 @@ async function buyEarly() {
       return alert(confirmData.error || 'Error updating user coins');
     }
 
-    // Step 2: Deduct from early supply
     const res = await fetch('/api/buy-early', {
       method: 'POST',
       headers: {'Content-Type': 'application/json'},
-      body: JSON.stringify({ kshAmount: amount })
+      body: JSON.stringify({ kshAmount: amountKES })
     });
 
     const data = await res.json();
@@ -738,11 +772,10 @@ async function buyEarly() {
       return alert(data.error || 'Not enough early coins left');
     }
 
-    // Step 3: Refresh UI
     await refreshUserData();
     await loadEarlyPage();
 
-    alert(`🎉 Bought ${amount} OHC!`);
+    alert(`🎉 Bought ${amountKES} OHC!`);
 
   } catch (err) {
     console.error(err);
