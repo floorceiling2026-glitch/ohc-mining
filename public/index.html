@@ -370,24 +370,13 @@
       });
 
       tonConnectUI.onStatusChange(wallet => {
-        if (wallet?.connected) {
+        if (wallet) {
           tonConnected = true;
-          tonAddress = wallet.account?.address;
-          document.getElementById('ton-status').innerHTML =
-            `<span class="text-green-400">Connected: ${tonAddress.slice(0,6)}...${tonAddress.slice(-4)}</span>`;
-          document.getElementById('connect-ton-btn').parentElement.classList.add('hidden');
-          document.getElementById('upgrade-btn').classList.remove('hidden');
+          console.log("Wallet connected:", wallet.account.address);
         } else {
           tonConnected = false;
-          document.getElementById('ton-status').textContent = '';
-          document.getElementById('connect-ton-btn').parentElement.classList.remove('hidden');
-          document.getElementById('upgrade-btn').classList.add('hidden');
+          console.log("Wallet disconnected");
         }
-      });
-
-      // custom button still needs to open modal explicitly
-      document.getElementById('connect-ton-btn').addEventListener('click', () => {
-        tonConnectUI.openModal();
       });
     }
 
