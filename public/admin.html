@@ -3,11 +3,38 @@
 <head><title>OHC Admin</title></head>
 <body style="background:#0a1428;color:white;font-family:sans-serif;">
   <h1>OHC Users Admin</h1>
+
+  <div style="margin-bottom: 1rem;">
+    <input id="admin-token" type="password" placeholder="Admin token"
+           style="padding:0.5rem;min-width:250px;" />
+    <button onclick="loadUsers()" style="padding:0.5rem 1rem;margin-left:0.5rem;">
+      Load Users
+    </button>
+  </div>
+
   <pre id="users"></pre>
+
   <script>
-    fetch('/api/admin/users')
-      .then(r => r.json())
-      .then(data => document.getElementById('users').textContent = JSON.stringify(data, null, 2));
+    async function loadUsers() {
+      const token = document.getElementById('admin-token').value.trim();
+      if (!token) {
+        alert('Please enter admin token');
+        return;
+      }
+
+      const res = await fetch('/api/admin/users', {
+        headers: { 'x-admin-token': token }
+      });
+
+      if (res.status === 403) {
+        alert('Unauthorized');
+        document.getElementById('users').textContent = '';
+        return;
+      }
+
+      const data = await res.json();
+      document.getElementById('users').textContent = JSON.stringify(data, null, 2);
+    }
   </script>
 </body>
 </html>

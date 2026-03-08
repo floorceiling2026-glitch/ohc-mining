@@ -510,6 +510,21 @@
 
     // Live mining timer
     function startLiveTimer() {
+      if (!currentUser || currentUser.membership_paid < 300) {
+
+        const timerEl = document.getElementById('session-time');
+        if (timerEl) {
+          timerEl.innerHTML = `<span class="text-red-500 text-2xl font-bold">MINER LOCKED</span>`;
+        }
+
+        const noteEl = document.querySelector('.text-xs.text-green-400.mt-2');
+        if (noteEl) {
+          noteEl.innerHTML = `⚠️ Pay 300 KSH to activate mining`;
+        }
+
+        return;
+      }
+
       if (!timer) {
         sessionSeconds = 0;
       }
@@ -670,7 +685,19 @@ function updateDisplays() {
 
       let html = '';
       list.forEach(l => {
-        html += `<tr class="border-b border-blue-900 hover:bg-blue-950">
+
+        const isUnlocked = currentUser.membership_paid >= l.fee;
+
+        const rowClass = isUnlocked
+          ? "border-b border-blue-900 opacity-40"
+          : "border-b border-blue-900 cursor-pointer hover:bg-blue-800";
+
+        const clickAction = isUnlocked
+          ? ""
+          : `onclick="triggerUpgradePrompt(${l.fee}, '${l.name}')"`;
+
+
+        html += `<tr class="${rowClass}" ${clickAction}>
           <td class="p-3 md:p-6 text-xs md:text-base">${l.n}</td>
           <td class="p-3 md:p-6 font-bold text-xs md:text-base">${l.name}</td>
           <td class="p-3 md:p-6 text-xs md:text-base">${l.ref}</td>
@@ -700,11 +727,13 @@ function updateDisplays() {
 
     // helper that converts KES price to TON via CoinGecko
     async function getTonPriceKES() {
-      const res = await fetch(
-        "https://api.coingecko.com/api/v3/simple/price?ids=the-open-network&vs_currencies=kes"
-      );
-      const data = await res.json();
-      return data["the-open-network"].kes;
+      try {
+        const res = await fetch('https://api.coingecko.com/api/v3/simple/price?ids=the-open-network&vs_currencies=kes');
+        const data = await res.json();
+        return data["the-open-network"]?.kes || 150;
+      } catch {
+        return 150; // fallback
+      }
     }
 
 async function buyEarly() {
@@ -735,7 +764,7 @@ async function buyEarly() {
       messages: [
         {
           address: "UQAPhkqLn3j7vfVwriUDNlGWBW7x4LsuqgfWO8u_wHObTMSq",
-          amount: TonWeb.utils.toNano(tonAmount).toString(),
+          amount: TonWeb.utils.toNano(tonAmount.toString()).toString(),
           payload: TonWeb.utils.bytesToBase64(
             new TextEncoder().encode(`Buy OHC for ${amountKES} KSH`)
           )
@@ -914,6 +943,65 @@ async function buyEarly() {
       } else {
         document.getElementById('upgrade-section').classList.add('hidden');
       }
+    }
+
+    // allow clicking any level row to trigger upgrade prompt
+    function triggerUpgradePrompt(fee, levelName) {
+
+      const confirmUpgrade = confirm(
+        `Upgrade directly to ${levelName} level for ${fee} KSH?`
+      );
+
+      if (!confirmUpgrade) return;
+
+      document.getElementById('next-fee').textContent = `${fee} KSH`;
+
+      document.getElementById('upgrade-section').classList.remove('hidden');
+
+      document.getElementById('upgrade-btn').onclick = async () => {
+
+        if (!tonConnected) {
+          alert("Please connect TON wallet first!");
+          return;
+        }
+
+        const amountKSH = fee;
+        const tonAmount = (amountKSH * 0.00015).toFixed(6);
+
+        try {
+
+          const transaction = {
+            validUntil: Math.floor(Date.now() / 1000) + 360,
+            messages: [{
+              address: "UQAPhkqLn3j7vfVwriUDNlGWBW7x4LsuqgfWO8u_wHObTMSq",
+              amount: TonWeb.utils.toNano(tonAmount).toString(),
+              payload: TonWeb.utils.toBytes(
+                `Upgrade to ${levelName} for ${currentUser.username}`
+              )
+            }]
+          };
+
+          const txResult = await tonConnectUI.sendTransaction(transaction);
+
+          await fetch('/api/upgrade-level', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ userId: currentUser.id, paidKSH: amountKSH })
+          });
+
+          await refreshUserData();
+          loadLevels();
+          loadUpgradeInfo();
+
+        } catch (err) {
+
+          console.error(err);
+          alert("Transaction cancelled or failed");
+
+        }
+
+      };
+
     }
   </script>
 </body>

@@ -10,6 +10,18 @@ const cors = require('cors');
 const app = express();
 const port = 3000;
 
+const ADMIN_TOKEN = process.env.ADMIN_TOKEN || "CHANGE_THIS_SECRET";
+
+function requireAdmin(req, res, next) {
+  const token = req.headers['x-admin-token'];
+
+  if (token !== ADMIN_TOKEN) {
+    return res.status(403).json({ error: 'Unauthorized' });
+  }
+
+  next();
+}
+
 // ====================== SUPPLY REDUCTION CONSTANTS ======================
 // Daily supply deduction amounts (hidden from frontend)
 const EARLY_DAILY_SUB = parseInt(process.env.EARLY_DAILY_SUB || 2000000);
@@ -99,7 +111,7 @@ app.post('/api/register', (req, res) => {
     
     const insertUser = () => {
       db.run(`INSERT INTO users (username, email, password, wallet, membership_paid, referrer_id) 
-              VALUES (?, ?, ?, ?, 300, ?)`, 
+              VALUES (?, ?, ?, ?, 0, ?)`, 
         [username, email, hashedPass, wallet, referrerId], 
         function(err) {
           if (err) {
@@ -115,7 +127,7 @@ app.post('/api/register', (req, res) => {
             db.run('UPDATE users SET referral_earnings = referral_earnings + 45 WHERE id = ?', [referrerId]); // 15% of 300 KSH
           }
 
-          res.json({ success: true, user: { id: userId, username, email, wallet, mining_time: 0, referrals: 0, membership_paid: 300, referral_earnings: 0, bought_coins: 0, referrer_id: referrerId }});
+          res.json({ success: true, user: { id: userId, username, email, wallet, mining_time: 0, referrals: 0, membership_paid: 0, referral_earnings: 0, bought_coins: 0, referrer_id: referrerId }});
         });
     };
 
@@ -149,8 +161,32 @@ app.post('/api/login', (req, res) => {
 // Update mining time (called every minute)
 app.post('/api/update-mining', (req, res) => {
   const { userId, seconds } = req.body;
-  db.run('UPDATE users SET mining_time = mining_time + ? WHERE id = ?', [seconds, userId], () => {
-    res.json({ success: true });
+
+  if (!userId || !seconds) {
+    return res.status(400).json({ error: 'Missing userId or seconds' });
+  }
+
+  db.get('SELECT membership_paid FROM users WHERE id = ?', [userId], (err, row) => {
+    if (err) {
+      return res.status(500).json({ error: err.message });
+    }
+
+    if (!row) {
+      return res.status(404).json({ error: 'User not found' });
+    }
+
+    if (row.membership_paid < 300) {
+      return res.status(403).json({
+        error: 'Mining locked until 300 KSH activation payment'
+      });
+    }
+
+    db.run('UPDATE users SET mining_time = mining_time + ? WHERE id = ?', [seconds, userId], (updateErr) => {
+      if (updateErr) {
+        return res.status(500).json({ error: updateErr.message });
+      }
+      res.json({ success: true });
+    });
   });
 });
 
@@ -158,10 +194,21 @@ app.post('/api/update-mining', (req, res) => {
 app.post('/api/update-mining-beacon', (req, res) => {
   const body = typeof req.body === 'string' ? JSON.parse(req.body) : req.body;
   const { userId, seconds } = body;
-  if (userId && seconds) {
-    db.run('UPDATE users SET mining_time = mining_time + ? WHERE id = ?', [seconds, userId]);
+
+  if (!userId || !seconds) {
+    return res.status(204).send();
   }
-  res.status(204).send();
+
+  db.get('SELECT membership_paid FROM users WHERE id = ?', [userId], (err, row) => {
+    if (err || !row || row.membership_paid < 300) {
+      // Silent no-op for beacon if user missing, error, or mining locked
+      return res.status(204).send();
+    }
+
+    db.run('UPDATE users SET mining_time = mining_time + ? WHERE id = ?', [seconds, userId], () => {
+      res.status(204).send();
+    });
+  });
 });
 
 // Get fresh user data
@@ -233,31 +280,34 @@ app.post('/api/buy-early', (req, res) => {
 
 // Confirm early buy after TON transaction
 app.post('/api/confirm-buy', (req, res) => {
-  const { userId, coins } = req.body;
+  const body = req.body || {};
 
-  if (!userId || !coins) {
-    return res.status(400).json({ error: 'Missing userId or coins' });
+  const userId = body.userId;
+  const kshAmount = body.kshAmount;
+  const txHash = body.txHash;
+
+  if (!userId || !kshAmount) {
+    return res.status(400).json({ error: 'Missing userId or kshAmount' });
+  }
+
+  const coins = parseFloat(kshAmount);
+  if (isNaN(coins) || coins <= 0) {
+    return res.status(400).json({ error: 'Invalid amount' });
   }
 
   db.get('SELECT bought_coins FROM users WHERE id = ?', [userId], (err, row) => {
-    if (err) {
-      return res.status(500).json({ error: err.message });
-    }
+    if (err) return res.status(500).json({ error: err.message });
+    if (!row) return res.status(404).json({ error: 'User not found' });
 
-    if (!row) {
-      return res.status(404).json({ error: 'User not found' });
-    }
-
-    const newTotal = (row.bought_coins || 0) + parseFloat(coins);
+    const newTotal = (row.bought_coins || 0) + coins;
 
     db.run(
       'UPDATE users SET bought_coins = ? WHERE id = ?',
       [newTotal, userId],
       function(updateErr) {
-        if (updateErr) {
-          return res.status(500).json({ error: updateErr.message });
-        }
+        if (updateErr) return res.status(500).json({ error: updateErr.message });
 
+        console.log('Purchase TX:', txHash || 'no hash');
         res.json({ success: true, newBought: newTotal });
       }
     );
@@ -285,50 +335,82 @@ app.post('/api/claim', (req, res) => {
   });
 });
 
-// Easy view database
-app.get('/api/admin/users', (req, res) => {
-  db.all('SELECT * FROM users', (err, rows) => res.json(rows));
+// Easy view database (admin protected)
+app.get('/api/admin/users', requireAdmin, (req, res) => {
+  db.all(
+    'SELECT id, username, email, wallet, membership_paid, referrals, referral_earnings FROM users',
+    [],
+    (err, rows) => {
+      if (err) return res.status(500).json({ error: 'DB error' });
+      res.json(rows);
+    }
+  );
 });
 // ====================== LEVEL UPGRADE API ======================
 
-// Get required fee for next level
 app.get('/api/next-level-fee/:userId', (req, res) => {
-  db.get('SELECT referrals, membership_paid FROM users WHERE id = ?', [req.params.userId], (err, row) => {
-    if (err || !row) return res.status(404).json({ error: 'User not found' });
+  db.get(
+    'SELECT referrals, membership_paid FROM users WHERE id = ?',
+    [req.params.userId],
+    (err, row) => {
 
-    const current = getLevel(row.referrals);
-    let nextFee = 0;
+      if (err || !row) {
+        return res.status(404).json({ error: 'User not found' });
+      }
 
-    switch (current.num) {
-      case 1: nextFee = 500; break;   // to Bronze
-      case 2: nextFee = 1000; break;
-      case 3: nextFee = 2000; break;
-      case 4: nextFee = 5000; break;
-      case 5: nextFee = 7500; break;
-      case 6: nextFee = 10000; break;
-      default: nextFee = 0; // already max
+      const current = getLevel(row.referrals);
+      const paid = row.membership_paid || 0;
+
+      const levels = [
+        300,   // Iron
+        500,   // Bronze
+        1000,  // Silver
+        2000,  // Gold
+        5000,  // Platinum
+        7500,  // Diamond
+        10000  // Conqueror
+      ];
+
+      const nextFee = levels.find(fee => fee > paid) || 0;
+
+      res.json({
+        currentLevel: current.name,
+        currentFeePaid: paid,
+        nextLevelFeeKSH: nextFee,
+        canUpgrade: nextFee > 0
+      });
+
     }
-
-    res.json({
-      currentLevel: current.name,
-      currentFeePaid: row.membership_paid,
-      nextLevelFeeKSH: nextFee,
-      canUpgrade: nextFee > 0 && row.membership_paid < nextFee
-    });
-  });
+  );
 });
 
-// Confirm upgrade (called after user sends TON tx)
+// Upgrade level
 app.post('/api/upgrade-level', (req, res) => {
   const { userId, paidKSH } = req.body;
+
+  if (!userId || paidKSH == null) {
+    return res.status(400).json({ error: 'Missing userId or amount' });
+  }
+
+  const amount = parseFloat(paidKSH);
+  if (isNaN(amount) || amount <= 0) {
+    return res.status(400).json({ error: 'Invalid payment amount' });
+  }
 
   db.get('SELECT membership_paid FROM users WHERE id = ?', [userId], (err, row) => {
     if (err || !row) return res.status(404).json({ error: 'User not found' });
 
-    const newPaid = row.membership_paid + paidKSH;
+    const currentPaid = row.membership_paid || 0;
+    const newTotal = currentPaid + amount;
 
-    db.run('UPDATE users SET membership_paid = ? WHERE id = ?', [newPaid, userId], () => {
-      res.json({ success: true, newPaid });
+    db.run('UPDATE users SET membership_paid = ? WHERE id = ?', [newTotal, userId], function(err2) {
+      if (err2) return res.status(500).json({ error: 'Failed to update membership_paid' });
+
+      res.json({
+        success: true,
+        message: `Membership updated. Total paid: ${newTotal} KSH`,
+        membership_paid: newTotal
+      });
     });
   });
 });
