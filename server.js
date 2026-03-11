@@ -1,6 +1,8 @@
 // server.js - Backend for Original Hustle Coin (OHC)
 // Easy for beginners - everything explained with comments
 
+require('dotenv').config();
+
 const express = require('express');
 const sqlite3 = require('sqlite3').verbose();
 const bcrypt = require('bcryptjs');
