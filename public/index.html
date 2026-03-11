@@ -30,8 +30,41 @@
       scrollbar-width: none;
     }
   </style>
+  <style>
+  body.theme-default {
+    background: linear-gradient(to bottom, #020617, #0f172a);
+  }
+
+  body.theme-iron {
+    background: linear-gradient(to bottom, #1e293b, #0f172a);
+  }
+
+  body.theme-bronze {
+    background: linear-gradient(to bottom, #78350f, #1c1917);
+  }
+
+  body.theme-silver {
+    background: linear-gradient(to bottom, #475569, #111827);
+  }
+
+  body.theme-gold {
+    background: linear-gradient(to bottom, #854d0e, #1c1917);
+  }
+
+  body.theme-platinum {
+    background: linear-gradient(to bottom, #155e75, #082f49);
+  }
+
+  body.theme-diamond {
+    background: linear-gradient(to bottom, #312e81, #0f172a);
+  }
+
+  body.theme-conqueror {
+    background: linear-gradient(to bottom, #581c87, #0f172a, #000000);
+  }
+</style>
 </head>
-<body class="bg-[#0a1428] text-white min-h-screen flex flex-col text-base">
+<body class="bg-theme-default text-white min-h-screen flex flex-col text-base">
 
   <!-- NAVBAR -->
   <nav class="bg-[#001f3f] sticky top-0 z-50 shadow-xl">
@@ -41,7 +74,7 @@
         <div class="text-3xl md:text-4xl font-black text-blue-400 tracking-tighter">OHC</div>
         <div>
           <div class="text-lg md:text-xl font-bold leading-tight">ORIGINAL HUSTLE COIN</div>
-          <div class="text-xs text-blue-300">Proof of Time</div>
+          <div class="text-xs theme-accent-text text-blue-300">Proof of Time</div>
         </div>
       </div>
 
@@ -49,6 +82,8 @@
         <a onclick="navigateTo('landing')" class="nav-link cursor-pointer hover:text-blue-400">Home</a>
         <a onclick="navigateTo('about')" class="nav-link cursor-pointer hover:text-blue-400">About</a>
         <a onclick="navigateTo('dashboard')" class="nav-link cursor-pointer logged-only hover:text-blue-400">Dashboard</a>
+        <a onclick="navigateTo('activity')" class="nav-link cursor-pointer logged-only hover:text-blue-400">Activity</a>
+        <a onclick="navigateTo('telegram')" class="nav-link cursor-pointer logged-only hover:text-blue-400 text-yellow-400">Telegram</a>
         <a onclick="navigateTo('referral')" class="nav-link cursor-pointer logged-only hover:text-blue-400">Referral</a>
         <a onclick="navigateTo('levels')" class="nav-link cursor-pointer logged-only hover:text-blue-400">Levels</a>
         <a onclick="navigateTo('early')" class="nav-link cursor-pointer logged-only hover:text-blue-400">Early Buyers</a>
@@ -56,9 +91,9 @@
 
       <div id="auth-btns" class="w-full md:w-auto flex flex-wrap justify-center gap-2 md:gap-3 mt-2 md:mt-0">
         <button onclick="navigateTo('login')" id="login-btn"
-          class="bg-blue-600 hover:bg-blue-700 px-4 md:px-6 py-2 rounded-xl font-bold text-sm md:text-base flex-1 md:flex-none">Login</button>
-        <button onclick="navigateTo('profile')" id="profile-btn" class="hidden bg-green-600 hover:bg-green-700 px-4 md:px-6 py-2 rounded-xl font-bold text-sm md:text-base flex-1 md:flex-none">Profile</button>
-        <button onclick="logout()" id="logout-btn" class="hidden bg-red-600 hover:bg-red-700 px-4 md:px-6 py-2 rounded-xl font-bold text-sm md:text-base flex-1 md:flex-none">Logout</button>
+          class="theme-button bg-blue-600 hover:bg-blue-700 px-4 md:px-6 py-2 rounded-xl font-bold text-sm md:text-base flex-1 md:flex-none">Login</button>
+        <button onclick="navigateTo('profile')" id="profile-btn" class="hidden theme-button bg-green-600 hover:bg-green-700 px-4 md:px-6 py-2 rounded-xl font-bold text-sm md:text-base flex-1 md:flex-none">Profile</button>
+        <button onclick="logout()" id="logout-btn" class="hidden theme-button bg-red-600 hover:bg-red-700 px-4 md:px-6 py-2 rounded-xl font-bold text-sm md:text-base flex-1 md:flex-none">Logout</button>
       </div>
     </div>
   </nav>
@@ -107,7 +142,7 @@
               <label class="block text-sm mb-2 flex items-center gap-2"><i class="fas fa-lock"></i> Password</label>
               <input id="login-password" type="password" required class="w-full bg-[#0a1428] rounded-xl md:rounded-2xl px-4 py-4 md:px-6 md:py-5 text-base md:text-lg">
             </div>
-            <button type="submit" class="w-full bg-blue-600 hover:bg-blue-700 py-4 md:py-6 rounded-xl md:rounded-2xl text-xl md:text-2xl font-bold">LOGIN</button>
+            <button type="submit" class="w-full theme-button bg-blue-600 hover:bg-blue-700 py-4 md:py-6 rounded-xl md:rounded-2xl text-xl md:text-2xl font-bold">LOGIN</button>
           </div>
         </form>
 
@@ -143,27 +178,27 @@
         
         <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 md:gap-6 mt-6 md:mt-10">
           
-          <div class="bg-[#001f3f] p-4 lg:p-6 rounded-3xl flex flex-col justify-center">
+          <div class="theme-card bg-[#001f3f] p-4 lg:p-6 rounded-3xl flex flex-col justify-center">
             <div class="flex justify-between items-center mb-4">
               <div class="text-sm lg:text-base xl:text-lg">Total Mining Time</div>
               <i class="fas fa-clock text-xl lg:text-2xl text-blue-400"></i>
             </div>
-            <div id="total-time" class="font-mono text-3xl xl:text-5xl font-bold text-cyan-400 tracking-tighter">00:00:00</div>
+            <div id="total-time" class="font-mono text-3xl xl:text-5xl font-bold theme-strong-text text-cyan-400 tracking-tighter">00:00:00</div>
           </div>
 
-          <div class="bg-[#001f3f] p-4 lg:p-6 rounded-3xl flex flex-col justify-center">
+          <div class="theme-card bg-[#001f3f] p-4 lg:p-6 rounded-3xl flex flex-col justify-center">
             <div class="text-sm lg:text-base xl:text-lg mb-4">Live Session</div>
             <div id="session-time" class="font-mono text-3xl xl:text-5xl font-bold text-green-400 tracking-tighter">00:00:00</div>
             <div class="text-xs text-green-400 mt-2">⏳ Mining right now...</div>
           </div>
 
-          <div class="bg-[#001f3f] p-4 lg:p-6 rounded-3xl flex flex-col justify-center">
+          <div class="theme-card bg-[#001f3f] p-4 lg:p-6 rounded-3xl flex flex-col justify-center">
             <div class="text-sm lg:text-base xl:text-lg mb-4">Current Rank</div>
             <div id="current-rank" class="text-3xl xl:text-5xl font-black text-yellow-400">Iron</div>
           </div>
 
-          <div class="bg-[#001f3f] p-4 lg:p-6 rounded-3xl flex flex-col justify-center">
-            <div class="text-sm lg:text-base xl:text-lg mb-4">Bought OHC</div>
+          <div class="theme-card bg-[#001f3f] p-4 lg:p-6 rounded-3xl flex flex-col justify-center">
+            <div class="text-sm lg:text-base xl:text-lg mb-4">OHC Wallet</div>
             <div id="bought-coins" class="text-3xl xl:text-5xl font-bold text-purple-400">0</div>
           </div>
 
@@ -187,19 +222,22 @@
     <!-- REFERRAL -->
     <section id="referral" class="page hidden px-2">
       <h1 class="text-3xl md:text-5xl font-bold mb-6 md:mb-10 text-center">Referral Center</h1>
-      <div class="bg-[#001f3f] p-6 md:p-10 rounded-2xl md:rounded-3xl max-w-2xl mx-auto text-center">
+      <div class="theme-card bg-[#001f3f] p-6 md:p-10 rounded-2xl md:rounded-3xl max-w-2xl mx-auto text-center">
         <div class="text-6xl md:text-8xl mb-4 md:mb-6">👥</div>
         <div class="text-4xl md:text-6xl font-bold mb-2" id="ref-count">0</div>
         <div class="text-lg md:text-2xl">People referred</div>
         
         <div class="mt-8 md:mt-12">
           <p class="text-lg md:text-xl mb-4">Your unique link</p>
-          <input id="ref-link" readonly class="bg-[#0a1428] w-full p-4 md:p-6 rounded-xl md:rounded-2xl text-sm md:text-lg font-mono text-center">
+          <input id="ref-link" readonly class="theme-panel bg-[#0a1428] w-full p-4 md:p-6 rounded-xl md:rounded-2xl text-sm md:text-lg font-mono text-center">
           <button onclick="copyRefLink()" 
-            class="mt-4 bg-blue-600 hover:bg-blue-700 w-full sm:w-auto px-8 md:px-10 py-3 md:py-4 rounded-xl md:rounded-2xl">Copy Link</button>
+            class="mt-4 theme-button bg-blue-600 hover:bg-blue-700 w-full sm:w-auto px-8 md:px-10 py-3 md:py-4 rounded-xl md:rounded-2xl">Copy Link</button>
         </div>
         
-        <p class="mt-8 md:mt-16 text-base md:text-xl text-blue-300">Invite friends → Earn 15% of every membership fee they pay!<br>More referrals = Higher rank + More coins</p>
+       <p class="mt-8 md:mt-16 text-base md:text-xl theme-accent-text text-blue-300">
+          Invite friends → Earn 30 OHC when each referred user completes their first successful level payment!
+          <br>More successful referrals = Higher rank + More rewards
+        </p>
 
         <div class="mt-12 md:mt-16 text-left">
           <h3 class="text-2xl md:text-3xl font-bold mb-4 md:mb-6 text-center">Your Referrals</h3>
@@ -208,40 +246,113 @@
       </div>
     </section>
 
+<section id="telegram" class="page hidden px-2">
+      <h1 class="text-3xl md:text-5xl font-bold mb-6 md:mb-10 text-center">Telegram Reward</h1>
+
+      <div class="theme-card bg-[#001f3f] p-6 md:p-10 rounded-2xl md:rounded-3xl max-w-2xl mx-auto text-center">
+        <div class="text-6xl md:text-8xl mb-4">📲</div>
+        <p class="text-lg md:text-xl theme-accent-text text-blue-300 mb-6">
+          Join our Telegram group and verify your membership to earn <span class="text-yellow-400 font-bold">20 OHC</span>.
+        </p>
+
+        <a href="https://t.me/YOUR_GROUP_LINK" target="_blank"
+          class="inline-block theme-button bg-blue-600 hover:bg-blue-700 px-8 py-4 rounded-2xl font-bold mb-6 w-full sm:w-auto">
+          Join Telegram Group
+        </a>
+
+        <div class="mt-6">
+          <input id="telegram-username" type="text" placeholder="Your @username"
+            class="theme-panel bg-[#0a1428] w-full p-4 rounded-xl md:rounded-2xl text-center mb-4 text-lg">
+
+          <button onclick="startTelegramVerification()"
+            class="bg-cyan-600 hover:bg-cyan-700 px-8 py-4 rounded-xl md:rounded-2xl font-bold w-full text-lg">
+            Start Verification
+          </button>
+        </div>
+
+        <div class="mt-8 bg-[#0a1428] p-4 rounded-xl md:rounded-2xl">
+          <p class="text-sm text-gray-400">Your verification code:</p>
+          <div id="telegram-code" class="text-2xl md:text-3xl font-mono font-bold text-yellow-400 mt-2 tracking-wider">---</div>
+        </div>
+
+        <div class="mt-6">
+          <button onclick="completeTelegramReward()"
+            class="bg-green-600 hover:bg-green-700 px-8 py-4 rounded-xl md:rounded-2xl font-bold w-full text-lg">
+            Claim 20 OHC Reward
+          </button>
+        </div>
+
+        <p id="telegram-status" class="mt-6 text-base md:text-lg font-bold"></p>
+      </div>
+    </section>
+
 <!-- LEVELS -->
 <section id="levels" class="page hidden px-2">
-  <h1 class="text-3xl md:text-5xl font-bold mb-6 md:mb-10 text-center">Your Levels & Ranks</h1>
+  <h1 class="text-3xl md:text-5xl font-bold mb-2 text-center">Your Levels & Ranks</h1>
+  
+  <p class="text-center theme-accent-text text-blue-300 mb-6 md:mb-10 text-sm md:text-base">
+    Upgrade levels to receive OHC equal to your level fee plus a 50% bonus! 
+    <br/><span class="text-xs text-gray-400">(e.g., Pay 300 KSH → Receive 450 OHC)</span>
+  </p>
 
-  <div id="my-level-card" class="bg-[#001f3f] p-6 md:p-10 rounded-2xl md:rounded-3xl text-center mb-8 md:mb-12"></div>
+  <div id="my-level-card" class="theme-card bg-[#001f3f] p-6 md:p-10 rounded-2xl md:rounded-3xl text-center mb-8 md:mb-12"></div>  
 
-  <div id="upgrade-section" class="bg-[#001f3f] p-6 md:p-10 rounded-2xl md:rounded-3xl mb-8 md:mb-12 hidden">
-    <h2 class="text-2xl md:text-4xl font-bold mb-4 md:mb-6 text-center text-yellow-300">Upgrade Your Level with TON</h2>
-    
-    <div class="text-lg md:text-xl mb-6 text-center">
-      Current Paid: <span id="current-paid" class="font-bold text-blue-300">0 KSH</span><br>
-      Next Level Fee: <span id="next-fee" class="font-bold text-green-400">0 KSH</span>
-    </div>
+<div id="upgrade-section" class="theme-card bg-[#001f3f] p-6 md:p-10 rounded-2xl md:rounded-3xl mb-8 md:mb-12 hidden">
+  <h2 class="text-2xl md:text-4xl font-bold mb-4 md:mb-6 text-center text-yellow-300">Upgrade Your Level with TON</h2>
 
-    <div class="text-center mb-6 md:mb-8 flex flex-col sm:flex-row justify-center items-center gap-4">
-      <div id="connect-ton-btn-wrapper">
-         <button id="connect-ton-btn" 
-          class="bg-blue-600 hover:bg-blue-700 px-6 py-3 md:px-12 md:py-5 rounded-xl md:rounded-2xl text-lg md:text-2xl font-bold w-full sm:w-auto">
-          Connect TON Wallet
-        </button>
-      </div>
-      <button id="upgrade-btn" disabled
-        class="bg-green-600 hover:bg-green-700 px-6 py-3 md:px-12 md:py-5 rounded-xl md:rounded-2xl text-lg md:text-2xl font-bold hidden w-full sm:w-auto">
-        Upgrade Now (Pay with TON)
+  <p class="text-center theme-accent-text text-blue-300 mt-2 mb-6">
+    Upgrade levels to receive OHC equal to your level fee plus a 50% bonus.
+  </p>
+
+  <div id="current-membership-label" class="text-lg md:text-xl theme-accent-text text-blue-300 mb-2 text-center">
+    Current Membership: Not Activated
+  </div>
+
+  <div class="text-lg md:text-xl mb-4 text-center">
+    Paid So Far: <span id="current-paid" class="font-bold text-yellow-400">0 KSH</span>
+  </div>
+
+  <div id="next-fee-label" class="text-lg md:text-xl theme-accent-text text-blue-300 mb-2 text-center">
+    Level 1 Fee (Iron)
+  </div>
+
+  <div class="text-lg md:text-xl mb-4 text-center">
+    <span id="next-fee" class="font-bold text-green-400">300 KSH</span>
+  </div>
+
+  <div class="text-lg md:text-xl mb-4 text-center">
+    Wallet Reward: <span id="next-reward" class="font-bold theme-strong-text text-cyan-400">450 OHC</span>
+  </div>
+
+  <div id="referral-rank-label" class="text-sm text-gray-300 mb-6 text-center">
+    Referral Rank: Iron
+  </div>
+
+<p id="theme-preview-label" class="theme-accent-text text-blue-300 mt-3 mb-4 text-center">
+  Your current theme matches your membership level.
+</p>
+
+  <div class="text-center mb-6 md:mb-8 flex flex-col sm:flex-row justify-center items-center gap-4">
+    <div id="connect-ton-btn-wrapper">
+      <button id="connect-ton-btn"
+        class="theme-button bg-blue-600 hover:bg-blue-700 px-6 py-3 md:px-12 md:py-5 rounded-xl md:rounded-2xl text-lg md:text-2xl font-bold w-full sm:w-auto">
+        Connect TON Wallet
       </button>
     </div>
 
-    <p id="ton-status" class="text-center text-base md:text-lg mt-4"></p>
-    <p class="text-xs md:text-sm text-gray-400 text-center mt-4">
-      Note: Approximate conversion 1 KSH ≈ 0.00015 TON (rates change - check real price)
-    </p>
+    <button id="upgrade-btn"
+      class="theme-button bg-green-600 hover:bg-green-700 px-6 py-3 md:px-12 md:py-5 rounded-xl md:rounded-2xl text-lg md:text-2xl font-bold w-full sm:w-auto">
+      Upgrade Now
+    </button>
   </div>
 
-  <div class="bg-[#001f3f] rounded-2xl md:rounded-3xl overflow-x-auto">
+  <p id="ton-status" class="text-center text-base md:text-lg mt-4"></p>
+  <p class="text-xs md:text-sm text-gray-400 text-center mt-4">
+    Uses live KES to TON market conversion rates.
+  </p>
+</div>
+
+  <div class="theme-card bg-[#001f3f] rounded-2xl md:rounded-3xl overflow-x-auto">
     <table class="w-full text-left">
       <thead class="bg-[#001f3f]">
         <tr class="border-b border-blue-900">
@@ -255,20 +366,49 @@
     </table>
   </div>
 </section>
+
+<section id="activity" class="page hidden px-2">
+      <h1 class="text-3xl md:text-5xl font-bold mb-6 md:mb-10 text-center">Live Activity</h1>
+
+      <div class="grid md:grid-cols-3 gap-4 md:gap-6 max-w-6xl mx-auto mb-8">
+        <div class="theme-card bg-[#001f3f] p-6 rounded-2xl md:rounded-3xl text-center">
+          <div class="text-lg theme-accent-text text-blue-300">Upgrades Today</div>
+          <div id="upgrades-today" class="text-4xl md:text-5xl font-bold text-yellow-400 mt-2">0</div>
+        </div>
+        <div class="theme-card bg-[#001f3f] p-6 rounded-2xl md:rounded-3xl text-center">
+          <div class="text-lg theme-accent-text text-blue-300">OHC Bought Today</div>
+          <div id="bought-today" class="text-4xl md:text-5xl font-bold theme-strong-text text-cyan-400 mt-2">0</div>
+        </div>
+        <div class="theme-card bg-[#001f3f] p-6 rounded-2xl md:rounded-3xl text-center">
+          <div class="text-lg theme-accent-text text-blue-300">Telegram Rewards Today</div>
+          <div id="telegram-today" class="text-4xl md:text-5xl font-bold text-green-400 mt-2">0</div>
+        </div>
+      </div>
+
+      <div class="theme-card bg-[#001f3f] p-6 md:p-8 rounded-2xl md:rounded-3xl max-w-5xl mx-auto">
+        <h2 class="text-2xl md:text-3xl font-bold mb-6 text-center">Recent Activity</h2>
+        <ul id="activity-list" class="space-y-4"></ul>
+      </div>
+    </section>
+
     <!-- PROFILE / SETTINGS -->
     <section id="profile" class="page hidden px-2">
       <div class="max-w-3xl mx-auto">
         <h1 class="text-3xl md:text-5xl font-bold mb-8 text-center">My Profile</h1>
         
-        <div class="bg-[#001f3f] p-6 md:p-10 rounded-2xl md:rounded-3xl mb-8">
+        <div class="theme-card bg-[#001f3f] p-6 md:p-10 rounded-2xl md:rounded-3xl mb-8">
           <div class="grid grid-cols-1 md:grid-cols-2 gap-6 md:gap-8">
             <div>
               <div class="text-sm md:text-base text-gray-400 mb-2">Username</div>
               <div id="profile-username" class="text-2xl md:text-3xl font-bold text-blue-400"></div>
             </div>
             <div>
+              <div class="text-sm md:text-base text-gray-400 mb-2">Claimed OHC</div>
+              <div id="profile-claimed" class="text-2xl md:text-3xl font-bold text-green-400">0</div>
+            </div>
+            <div>
               <div class="text-sm md:text-base text-gray-400 mb-2">Email</div>
-              <div id="profile-email" class="text-lg md:text-2xl font-mono text-blue-300 break-all"></div>
+              <div id="profile-email" class="text-lg md:text-2xl font-mono theme-accent-text text-blue-300 break-all"></div>
             </div>
             <div>
               <div class="text-sm md:text-base text-gray-400 mb-2">Wallet Address</div>
@@ -276,7 +416,7 @@
             </div>
             <div>
               <div class="text-sm md:text-base text-gray-400 mb-2">Total Mining Time</div>
-              <div id="profile-mining" class="text-2xl md:text-3xl font-bold text-cyan-400"></div>
+              <div id="profile-mining" class="text-2xl md:text-3xl font-bold theme-strong-text text-cyan-400"></div>
             </div>
             <div>
               <div class="text-sm md:text-base text-gray-400 mb-2">Level</div>
@@ -287,29 +427,35 @@
               <div id="profile-referrals" class="text-2xl md:text-3xl font-bold text-purple-400"></div>
             </div>
             <div>
-              <div class="text-sm md:text-base text-gray-400 mb-2">OHC Bought</div>
+              <div class="text-sm md:text-base text-gray-400 mb-2">OHC Wallet</div>
               <div id="profile-bought" class="text-2xl md:text-3xl font-bold text-orange-400"></div>
             </div>
             <div>
               <div class="text-sm md:text-base text-gray-400 mb-2">Member Since</div>
-              <div id="profile-joined" class="text-lg md:text-xl text-blue-300"></div>
+              <div id="profile-joined" class="text-lg md:text-xl theme-accent-text text-blue-300"></div>
             </div>
           </div>
         </div>
 
-        <div class="bg-[#001f3f] p-6 md:p-10 rounded-2xl md:rounded-3xl">
+        <div class="theme-card bg-[#001f3f] p-6 md:p-10 rounded-2xl md:rounded-3xl">
           <h2 class="text-2xl md:text-3xl font-bold mb-6 text-center">Settings</h2>
           <div class="space-y-6">
-            <div>
-              <label class="block text-sm md:text-base mb-3 font-semibold">Change Password</label>
-              <div class="flex flex-col sm:flex-row gap-3">
-                <input id="new-password" type="password" placeholder="New password (A + 2 numbers, 8+ chars)" 
-                  class="flex-1 bg-[#0a1428] p-3 md:p-4 rounded-xl text-sm md:text-base">
-                <button onclick="changePassword()" 
-                  class="bg-blue-600 hover:bg-blue-700 px-6 md:px-8 py-3 md:py-4 rounded-xl font-bold text-sm md:text-base">Update</button>
-              </div>
-              <p id="password-status" class="text-sm mt-2"></p>
-            </div>
+<div>
+  <label class="block text-sm md:text-base mb-3 font-semibold">Change Password</label>
+  <div class="flex flex-col gap-3">
+    <input id="old-password" type="password" placeholder="Current password"
+      class="flex-1 bg-[#0a1428] p-3 md:p-4 rounded-xl text-sm md:text-base">
+
+    <input id="new-password" type="password" placeholder="New password (A + 2 numbers, 8+ chars)"
+      class="flex-1 bg-[#0a1428] p-3 md:p-4 rounded-xl text-sm md:text-base">
+
+    <button onclick="changePassword()"
+      class="theme-button bg-blue-600 hover:bg-blue-700 px-6 md:px-8 py-3 md:py-4 rounded-xl font-bold text-sm md:text-base">
+      Update
+    </button>
+  </div>
+  <p id="password-status" class="text-sm mt-2"></p>
+</div>
             <div class="pt-6 border-t border-blue-900">
               <button onclick="logout()" 
                 class="w-full bg-red-600 hover:bg-red-700 px-6 md:px-8 py-4 md:py-6 rounded-xl font-bold text-lg md:text-xl">
@@ -325,21 +471,28 @@
     <section id="early" class="page hidden px-2">
       <h1 class="text-3xl md:text-5xl font-bold mb-6 md:mb-10 text-center">Early Buyers - 100M OHC</h1>
       <div class="grid grid-cols-1 md:grid-cols-2 gap-6 md:gap-8">
-        <div class="bg-[#001f3f] p-6 md:p-10 rounded-2xl md:rounded-3xl text-center md:text-left">
+        <div class="theme-card bg-[#001f3f] p-6 md:p-10 rounded-2xl md:rounded-3xl text-center md:text-left">
           <div class="text-lg md:text-2xl mb-2 md:mb-4">Available for Early Buyers</div>
-          <div id="early-avail" class="text-4xl sm:text-5xl md:text-7xl font-bold text-cyan-400 tracking-tighter">100,000,000</div>
-          <div class="text-lg md:text-2xl text-blue-300 mt-2">OHC @ 1 KSH each</div>
+          <div id="early-avail" class="text-4xl sm:text-5xl md:text-7xl font-bold theme-strong-text text-cyan-400 tracking-tighter">100,000,000</div>
+          <div class="text-lg md:text-2xl theme-accent-text text-blue-300 mt-2">OHC @ 1 KSH each</div>
           
           <div class="mt-6 md:mt-10">
             <div id="connect-ton-btn" class="mb-6"></div>
-            <input id="buy-amount" type="number" placeholder="How many KSH?" 
+<input id="buy-amount" type="number" min="1" step="1" placeholder="How many OHC?" oninput="updateEarlyBuyPreview()"
               class="w-full bg-[#0a1428] p-4 md:p-6 rounded-xl md:rounded-2xl text-xl md:text-2xl text-center md:text-left">
+            
+            <div class="mt-4 text-sm md:text-base text-blue-200 space-y-1 text-center md:text-left">
+              <div>OHC to receive: <span id="buy-ohc-preview" class="font-bold theme-strong-text text-cyan-400">0</span></div>
+              <div>KSH cost: <span id="buy-ksh-preview" class="font-bold text-green-400">0</span></div>
+              <div>Estimated TON: <span id="buy-ton-preview" class="font-bold text-blue-400">0</span></div>
+            </div>
+
             <button onclick="buyEarly()" 
-              class="mt-4 md:mt-6 w/full bg-gradient-to-r from-cyan-500 to-blue-600 py-4 md:py-8 text-xl md:text-3xl rounded-xl md:rounded-3xl font-bold">BUY NOW</button>
+              class="mt-4 md:mt-6 w-full bg-gradient-to-r from-cyan-500 to-blue-600 py-4 md:py-8 text-xl md:text-3xl rounded-xl md:rounded-3xl font-bold">BUY NOW</button>
           </div>
         </div>
 
-        <div class="bg-[#001f3f] p-6 md:p-10 rounded-2xl md:rounded-3xl text-center md:text-left">
+        <div class="theme-card bg-[#001f3f] p-6 md:p-10 rounded-2xl md:rounded-3xl text-center md:text-left">
           <div class="text-lg md:text-2xl mb-2 md:mb-4">Community Supply Remaining</div>
           <div id="comm-remain" class="text-4xl sm:text-5xl md:text-7xl font-bold text-orange-400 tracking-tighter">600,000,000</div>
           <div class="mt-4 text-xs md:text-sm text-gray-300">Supply updates daily through verified mining</div>
@@ -361,6 +514,8 @@
     let tonConnectUI = null;
     let tonConnected = false;
     let tonAddress = null;
+    let selectedUpgrade = null;
+    let activityPoller = null;
 
     // initialize TON Connect UI and set up status handling
     function initTonConnect() {
@@ -385,40 +540,66 @@
       about: document.getElementById('about'),
       login: document.getElementById('login'),
       dashboard: document.getElementById('dashboard'),
+      telegram: document.getElementById('telegram'),
       referral: document.getElementById('referral'),
       levels: document.getElementById('levels'),
       early: document.getElementById('early'),
+      activity: document.getElementById('activity'),
       profile: document.getElementById('profile')
     };
 
-    function navigateTo(page) {
-      if (['dashboard','referral','levels','early','profile'].includes(page) && !currentUser) {
-        alert("Please login first!");
-        navigateTo('login');
-        return;
-      }
-      Object.values(pages).forEach(p => p.classList.add('hidden'));
-      pages[page].classList.remove('hidden');
-      window.scrollTo(0, 0);
+function navigateTo(page) {
+  if (['dashboard','referral','levels','early','telegram','activity','profile'].includes(page) && !currentUser) {
+    alert("Please login first!");
+    navigateTo('login');
+    return;
+  }
 
-      if (page === 'dashboard') {
-        startLiveTimer();
-        loadCountdown();
-      }
-      if (page === 'referral') loadReferral();
-      if (page === 'levels') {
-        loadLevels();
-        loadUpgradeInfo();
-      }
-      if (page === 'early') loadEarlyPage();
-      if (page === 'profile') loadProfile();
-    }
+  Object.values(pages).forEach(p => p.classList.add('hidden'));
+  pages[page].classList.remove('hidden');
+  window.scrollTo(0, 0);
+
+  if (activityPoller) {
+    clearInterval(activityPoller);
+    activityPoller = null;
+  }
+
+  if (page === 'dashboard') {
+    startLiveTimer();
+    loadCountdown();
+  }
+  if (page === 'referral') loadReferral();
+  if (page === 'levels') {
+    loadLevels();
+    loadUpgradeInfo();
+  }
+  if (page === 'early') loadEarlyPage();
+  if (page === 'profile') loadProfile();
+
+  if (page === 'activity') {
+    loadActivityPage();
+    activityPoller = setInterval(loadActivityPage, 15000);
+  }
+}
 
     function switchTab(n) {
       document.getElementById('loginForm').classList.toggle('hidden', n === 1);
       document.getElementById('registerForm').classList.toggle('hidden', n === 0);
       document.getElementById('tab0').classList.toggle('border-b-4', n === 0);
       document.getElementById('tab1').classList.toggle('border-b-4', n === 1);
+    }
+
+    function getAuthHeaders(includeJson = true) {
+      const token = localStorage.getItem('token');
+      const headers = {
+        'Authorization': `Bearer ${token || ''}`
+      };
+
+      if (includeJson) {
+        headers['Content-Type'] = 'application/json';
+      }
+
+      return headers;
     }
 
     // Login
@@ -434,15 +615,24 @@
       });
       const data = await res.json();
 
-      if (data.success) {
-        currentUser = data.user;
-        localStorage.setItem('ohcUser', JSON.stringify(currentUser));
-        document.getElementById('login-btn').classList.add('hidden');
-        document.getElementById('logout-btn').classList.remove('hidden');
-        document.getElementById('profile-btn').classList.remove('hidden');
-        await refreshUserData();
-        navigateTo('dashboard');
-      } else alert(data.error);
+if (data.success) {
+  currentUser = data.user;
+
+  localStorage.setItem('ohcUser', JSON.stringify(currentUser));
+  localStorage.setItem('token', data.token);
+
+  document.getElementById('login-btn').classList.add('hidden');
+  document.getElementById('logout-btn').classList.remove('hidden');
+  document.getElementById('profile-btn').classList.remove('hidden');
+
+  await refreshUserData();
+  applyLevelTheme();
+  startLiveTimer();
+  await loadCountdown();
+  navigateTo('dashboard');
+} else {
+  alert(data.error);
+}
     }
 
     // Register
@@ -463,50 +653,74 @@
       const data = await res.json();
 
       if (data.success) {
-        currentUser = data.user;
-        localStorage.setItem('ohcUser', JSON.stringify(currentUser));
-        document.getElementById('login-btn').classList.add('hidden');
-        document.getElementById('logout-btn').classList.remove('hidden');
-        document.getElementById('profile-btn').classList.remove('hidden');
-        alert('Account created! Welcome to OHC 🚀');
-        await refreshUserData();
-        startLiveTimer();
-        await loadCountdown();
-        navigateTo('dashboard');
-      } else alert(data.error);
+  currentUser = data.user;
+  localStorage.setItem('ohcUser', JSON.stringify(currentUser));
+  localStorage.setItem('token', data.token);
+
+  document.getElementById('login-btn').classList.add('hidden');
+  document.getElementById('logout-btn').classList.remove('hidden');
+  document.getElementById('profile-btn').classList.remove('hidden');
+
+  alert('Account created! Welcome to OHC 🚀');
+  await refreshUserData();
+  applyLevelTheme();
+  startLiveTimer();
+  await loadCountdown();
+  navigateTo('dashboard');
+} else {
+  alert(data.error);
+}
     }
 
-    function logout() {
-      localStorage.removeItem('ohcUser');
-      currentUser = null;
-      document.getElementById('login-btn').classList.remove('hidden');
-      document.getElementById('logout-btn').classList.add('hidden');
-      document.getElementById('profile-btn').classList.add('hidden');
-      navigateTo('landing');
-      if (timer) clearInterval(timer);
-    }
+function logout() {
+  localStorage.removeItem('ohcUser');
+  localStorage.removeItem('token');
 
+  currentUser = null;
+
+  document.getElementById('login-btn').classList.remove('hidden');
+  document.getElementById('logout-btn').classList.add('hidden');
+  document.getElementById('profile-btn').classList.add('hidden');
+
+  navigateTo('landing');
+
+  if (timer) {
+    clearInterval(timer);
+    timer = null;
+  }
+
+  sessionSeconds = 0;
+}
     // Load saved user
-    function loadSavedUser() {
-      const saved = localStorage.getItem('ohcUser');
-      if (saved) {
-        currentUser = JSON.parse(saved);
-        document.getElementById('login-btn').classList.add('hidden');
-        document.getElementById('logout-btn').classList.remove('hidden');
-        document.getElementById('profile-btn').classList.remove('hidden');
-        // Load dashboard but preserve session timer
-        loadCountdown();
-        navigateTo('dashboard');
-      } else {
-        const urlParams = new URLSearchParams(window.location.search);
-        const ref = urlParams.get('ref');
-        if (ref) {
-          navigateTo('login');
-        } else {
-          navigateTo('landing');
-        }
-      }
+function loadSavedUser() {
+  const savedUser = localStorage.getItem('ohcUser');
+  const token = localStorage.getItem('token');
+
+  if (savedUser && token) {
+    currentUser = JSON.parse(savedUser);
+
+    document.getElementById('login-btn').classList.add('hidden');
+    document.getElementById('logout-btn').classList.remove('hidden');
+    document.getElementById('profile-btn').classList.remove('hidden');
+
+    loadCountdown();
+    applyLevelTheme();
+    navigateTo('dashboard');
+    refreshUserData();
+  } else {
+    localStorage.removeItem('ohcUser');
+    localStorage.removeItem('token');
+
+    const urlParams = new URLSearchParams(window.location.search);
+    const ref = urlParams.get('ref');
+
+    if (ref) {
+      navigateTo('login');
+    } else {
+      navigateTo('landing');
     }
+  }
+}
 
     // Live mining timer
     function startLiveTimer() {
@@ -530,30 +744,47 @@
       }
       updateDisplays();
 
-      if (!timer) {
-        timer = setInterval(() => {
-          sessionSeconds++;
-          updateDisplays();
+if (!timer) {
+  timer = setInterval(() => {
+    sessionSeconds++;
+    updateDisplays();
 
-          if (sessionSeconds % 60 === 0) {
-            fetch('/api/update-mining', {
-              method: 'POST',
-              headers: {'Content-Type': 'application/json'},
-              body: JSON.stringify({ userId: currentUser.id, seconds: 60 })
-            }).then(() => refreshUserData());
-          }
-        }, 1000);
-      }
+    if (sessionSeconds % 60 === 0) {
+      fetch('/api/update-mining', {
+        method: 'POST',
+        headers: getAuthHeaders(),
+        body: JSON.stringify({ seconds: 60 })
+      }).then(() => refreshUserData());
+    }
+  }, 1000);
+}
     }
 
-    async function refreshUserData() {
-      const res = await fetch(`/api/user/${currentUser.id}`);
-      const fresh = await res.json();
-      currentUser = fresh;
-      localStorage.setItem('ohcUser', JSON.stringify(currentUser));
-      updateDisplays();
-    }
+async function refreshUserData() {
+  const token = localStorage.getItem('token');
 
+  if (!token) {
+    logout();
+    return;
+  }
+
+  const res = await fetch('/api/me', {
+    headers: getAuthHeaders(false)
+  });
+
+  if (!res.ok) {
+    if (res.status === 401) {
+      logout();
+    }
+    return;
+  }
+
+  const fresh = await res.json();
+  currentUser = fresh;
+  localStorage.setItem('ohcUser', JSON.stringify(currentUser));
+  updateDisplays();
+  applyLevelTheme();
+}
 function updateDisplays() {
 
   // Total time
@@ -578,8 +809,7 @@ function updateDisplays() {
 
   // Bought Coins (NEW)
   document.getElementById('bought-coins').textContent =
-    (currentUser.bought_coins || 0).toLocaleString();
-
+    (currentUser.ohc_balance || currentUser.bought_coins || 0).toLocaleString();
 }
     // Countdown
     async function loadCountdown() {
@@ -589,11 +819,19 @@ function updateDisplays() {
 
       setInterval(() => {
         const diff = lockEndDate - Date.now();
-        if (diff <= 0) {
-          document.getElementById('countdown').innerHTML = '🔓 LOCK ENDED - CLAIM NOW!';
-          document.getElementById('claim-btn').disabled = false;
-          return;
-        }
+if (diff <= 0) {
+  document.getElementById('countdown').innerHTML = '🔓 LOCK ENDED - CLAIM NOW!';
+
+  if (currentUser?.claim_status === 'claimed') {
+    document.getElementById('claim-btn').disabled = true;
+    document.getElementById('claim-btn').textContent = 'Already Claimed';
+  } else {
+    document.getElementById('claim-btn').disabled = false;
+    document.getElementById('claim-btn').textContent = 'Claim Now';
+  }
+
+  return;
+}
         const d = Math.floor(diff / 86400000);
         const h = Math.floor((diff % 86400000) / 3600000);
         const m = Math.floor((diff % 3600000) / 60000);
@@ -604,16 +842,41 @@ function updateDisplays() {
 
     // Claim
     async function handleClaim() {
-      const res = await fetch('/api/claim', {
-        method: 'POST',
-        headers: {'Content-Type': 'application/json'},
-        body: JSON.stringify({ userId: currentUser.id })
-      });
-      const data = await res.json();
-      document.getElementById('claim-status').innerHTML = 
-        data.success ? `<span class="text-green-400">${data.message}</span>` : 
-                       `<span class="text-red-400">${data.error}</span>`;
-    }
+  if (!currentUser) {
+    alert('Please login first');
+    return;
+  }
+
+const res = await fetch('/api/claim', {
+  method: 'POST',
+  headers: getAuthHeaders(),
+  body: JSON.stringify({})
+});
+
+  const data = await res.json();
+
+  document.getElementById('claim-status').innerHTML =
+    data.success
+      ? `<span class="text-green-400">${data.message}</span>`
+      : `<span class="text-red-400">${data.error}</span>`;
+
+  if (data.success) {
+    currentUser.ohc_balance = data.ohc_balance;
+    currentUser.reward_ohc = data.reward_ohc;
+    currentUser.claim_status = data.claim_status;
+    currentUser.claimed_at = data.claimed_at;
+    currentUser.claimed_ohc = data.claimed_ohc;
+
+    localStorage.setItem('ohcUser', JSON.stringify(currentUser));
+
+    document.getElementById('claim-btn').disabled = true;
+    document.getElementById('claim-btn').textContent = 'Already Claimed';
+
+    await refreshUserData();
+    updateDisplays();
+    loadProfile();
+  }
+}
 
     // Referral
     function loadReferral() {
@@ -622,7 +885,9 @@ function updateDisplays() {
       document.getElementById('ref-link').value = link;
 
       // Load the list of people referred by this user
-      fetch(`/api/referrals/${currentUser.id}`)
+fetch('/api/referrals', {
+  headers: getAuthHeaders(false)
+})
         .then(res => res.json())
         .then(refs => {
           let html = '';
@@ -632,7 +897,7 @@ function updateDisplays() {
           } else {
             refs.forEach((r, i) => {
               const joinDate = new Date(r.joined_at).toLocaleDateString();
-              html += `<li class="bg-[#0a1428] p-4 rounded-lg flex justify-between items-center">
+              html += `<li class="theme-panel bg-[#0a1428] p-4 rounded-lg flex justify-between items-center">
                 <div class="flex-1">
                   <div class="font-bold text-base md:text-lg">${r.username}</div>
                   <div class="text-xs md:text-sm text-gray-400">Joined: ${joinDate}</div>
@@ -696,7 +961,6 @@ function updateDisplays() {
           ? ""
           : `onclick="triggerUpgradePrompt(${l.fee}, '${l.name}')"`;
 
-
         html += `<tr class="${rowClass}" ${clickAction}>
           <td class="p-3 md:p-6 text-xs md:text-base">${l.n}</td>
           <td class="p-3 md:p-6 font-bold text-xs md:text-base">${l.name}</td>
@@ -718,13 +982,201 @@ function updateDisplays() {
       return {name: 'Iron', num: 1};
     }
 
-    // Early Buyers
-    async function loadEarlyPage() {
-      const g = await (await fetch('/api/globals')).json();
-      document.getElementById('early-avail').textContent = parseFloat(g.early_remaining).toLocaleString();
-      document.getElementById('comm-remain').textContent = parseFloat(g.community_remaining).toLocaleString();
-    }
+function calculateDisplayedLevelReward(fee) {
+  return Math.floor(fee * 1.5);
+}
 
+function getMembershipThemeLevel(paidAmount) {
+  const paid = Number(paidAmount || 0);
+
+  if (paid >= 10000) return 7; // Conqueror
+  if (paid >= 7500) return 6;  // Diamond
+  if (paid >= 5000) return 5;  // Platinum
+  if (paid >= 2000) return 4;  // Gold
+  if (paid >= 1000) return 3;  // Silver
+  if (paid >= 500) return 2;   // Bronze
+  if (paid >= 300) return 1;   // Iron
+  return 0;                    // Not activated
+}
+
+const LEVEL_THEMES = {
+  0: {
+    body: 'theme-default',
+    card: 'bg-[#001f3f]',
+    panel: 'bg-[#0a1428]',
+    button: 'bg-blue-600 hover:bg-blue-700',
+    accentText: 'text-blue-300',
+    strongText: 'text-cyan-400'
+  },
+  1: {
+    body: 'theme-iron',
+    card: 'bg-slate-700',
+    panel: 'bg-slate-900',
+    button: 'bg-slate-600 hover:bg-slate-500',
+    accentText: 'text-slate-200',
+    strongText: 'text-sky-300'
+  },
+  2: {
+    body: 'theme-bronze',
+    card: 'bg-amber-800',
+    panel: 'bg-stone-900',
+    button: 'bg-orange-600 hover:bg-orange-500',
+    accentText: 'text-amber-200',
+    strongText: 'text-yellow-300'
+  },
+  3: {
+    body: 'theme-silver',
+    card: 'bg-gray-600',
+    panel: 'bg-slate-800',
+    button: 'bg-gray-400 hover:bg-gray-300 text-black',
+    accentText: 'text-gray-200',
+    strongText: 'text-cyan-300'
+  },
+  4: {
+    body: 'theme-gold',
+    card: 'bg-yellow-700',
+    panel: 'bg-yellow-950',
+    button: 'bg-yellow-500 hover:bg-yellow-400 text-black',
+    accentText: 'text-yellow-200',
+    strongText: 'text-orange-300'
+  },
+  5: {
+    body: 'theme-platinum',
+    card: 'bg-cyan-700',
+    panel: 'bg-slate-900',
+    button: 'bg-cyan-500 hover:bg-cyan-400 text-black',
+    accentText: 'text-cyan-200',
+    strongText: 'text-white'
+  },
+  6: {
+    body: 'theme-diamond',
+    card: 'bg-indigo-700',
+    panel: 'bg-slate-950',
+    button: 'bg-violet-500 hover:bg-violet-400',
+    accentText: 'text-violet-200',
+    strongText: 'text-cyan-300'
+  },
+  7: {
+    body: 'theme-conqueror',
+    card: 'bg-gradient-to-r from-purple-700 to-blue-700',
+    panel: 'bg-black',
+    button: 'bg-gradient-to-r from-fuchsia-500 to-blue-500 hover:from-fuchsia-400 hover:to-cyan-400',
+    accentText: 'text-fuchsia-200',
+    strongText: 'text-yellow-300'
+  }
+};
+
+function applyLevelTheme() {
+  const levelNumber = getMembershipThemeLevel(currentUser?.membership_paid || 0);
+  const theme = LEVEL_THEMES[levelNumber] || LEVEL_THEMES[0];
+
+  document.body.classList.remove(
+    'theme-default',
+    'theme-iron',
+    'theme-bronze',
+    'theme-silver',
+    'theme-gold',
+    'theme-platinum',
+    'theme-diamond',
+    'theme-conqueror'
+  );
+
+  document.body.classList.add(theme.body);
+
+  document.querySelectorAll('.theme-card').forEach(el => {
+    el.classList.remove(
+      'bg-[#001f3f]', 'bg-slate-700', 'bg-amber-800', 'bg-gray-600',
+      'bg-yellow-700', 'bg-cyan-700', 'bg-indigo-700',
+      'bg-gradient-to-r', 'from-purple-700', 'to-blue-700'
+    );
+    theme.card.split(' ').forEach(cls => el.classList.add(cls));
+  });
+
+  document.querySelectorAll('.theme-panel').forEach(el => {
+    el.classList.remove(
+      'bg-[#0a1428]', 'bg-slate-900', 'bg-stone-900', 'bg-slate-800',
+      'bg-yellow-950', 'bg-black', 'bg-slate-950'
+    );
+    theme.panel.split(' ').forEach(cls => el.classList.add(cls));
+  });
+
+  document.querySelectorAll('.theme-button').forEach(el => {
+    el.classList.remove(
+      'bg-blue-600', 'hover:bg-blue-700',
+      'bg-slate-600', 'hover:bg-slate-500',
+      'bg-orange-600', 'hover:bg-orange-500',
+      'bg-gray-400', 'hover:bg-gray-300',
+      'bg-yellow-500', 'hover:bg-yellow-400',
+      'bg-cyan-500', 'hover:bg-cyan-400',
+      'bg-violet-500', 'hover:bg-violet-400',
+      'bg-gradient-to-r', 'from-fuchsia-500', 'to-blue-500',
+      'hover:from-fuchsia-400', 'hover:to-cyan-400',
+      'text-black'
+    );
+    theme.button.split(' ').forEach(cls => el.classList.add(cls));
+  });
+
+  document.querySelectorAll('.theme-accent-text').forEach(el => {
+    el.classList.remove(
+      'text-blue-300', 'text-slate-200', 'text-amber-200',
+      'text-gray-200', 'text-yellow-200', 'text-cyan-200',
+      'text-violet-200', 'text-fuchsia-200'
+    );
+    theme.accentText.split(' ').forEach(cls => el.classList.add(cls));
+  });
+
+  document.querySelectorAll('.theme-strong-text').forEach(el => {
+    el.classList.remove(
+      'text-cyan-400',
+      'text-sky-300',
+      'text-yellow-300',
+      'text-cyan-300',
+      'text-orange-300',
+      'text-white'
+    );
+    theme.strongText.split(' ').forEach(cls => el.classList.add(cls));
+  });
+}
+
+// NEW: Live preview for Early Buyers
+async function updateEarlyBuyPreview() {
+  const inputValue = parseFloat(document.getElementById('buy-amount').value) || 0;
+
+  // 1 OHC = 1 KSH
+  const ohcAmount = inputValue;
+  const kshAmount = inputValue;
+
+  document.getElementById('buy-ohc-preview').textContent = ohcAmount.toLocaleString();
+  document.getElementById('buy-ksh-preview').textContent = kshAmount.toLocaleString();
+
+  if (kshAmount <= 0) {
+    document.getElementById('buy-ton-preview').textContent = '0';
+    return;
+  }
+
+  try {
+    const tonPriceKES = await getTonPriceKES();
+    const tonAmount = (kshAmount / tonPriceKES).toFixed(6);
+    document.getElementById('buy-ton-preview').textContent = tonAmount;
+  } catch {
+    document.getElementById('buy-ton-preview').textContent = 'Error';
+  }
+}
+
+// Early Buyers
+async function loadEarlyPage() {
+  const g = await (await fetch('/api/globals')).json();
+  const earlyRemaining = parseFloat(g.early_remaining);
+
+  document.getElementById('early-avail').textContent = earlyRemaining.toLocaleString();
+  document.getElementById('comm-remain').textContent = parseFloat(g.community_remaining).toLocaleString();
+  
+  // NEW: Stop users from entering more than what is left
+  document.getElementById('buy-amount').max = earlyRemaining;
+
+  // NEW: Refresh preview values on page load
+  updateEarlyBuyPreview();
+}
     // helper that converts KES price to TON via CoinGecko
     async function getTonPriceKES() {
       try {
@@ -737,81 +1189,160 @@ function updateDisplays() {
     }
 
 async function buyEarly() {
-
   if (!tonConnected) {
     alert("Please connect your TON wallet first");
     return;
   }
 
-  const amountKES = parseFloat(document.getElementById('buy-amount').value);
+  const ohcAmount = parseFloat(document.getElementById('buy-amount').value);
 
-  if (!amountKES || amountKES <= 0) {
-    return alert('Enter a valid amount in KSH');
+  if (!ohcAmount || ohcAmount <= 0) {
+    alert('Enter a valid OHC amount');
+    return;
   }
 
   if (!currentUser) {
-    return alert('You must be logged in');
+    alert('You must be logged in');
+    return;
   }
 
   try {
+    // 1 OHC = 1 KSH
+    const kshAmount = ohcAmount;
 
-    // get current TON price
     const tonPriceKES = await getTonPriceKES();
-    const tonAmount = (amountKES / tonPriceKES).toFixed(6);
+    const tonAmount = (kshAmount / tonPriceKES).toFixed(6);
+
+    // NEW: Debugging logs to verify what we are sending to the wallet
+    console.log('OHC amount:', ohcAmount);
+    console.log('KSH amount:', kshAmount);
+    console.log('TON price in KES:', tonPriceKES);
+    console.log('TON amount to send:', tonAmount);
 
     const transaction = {
       validUntil: Math.floor(Date.now() / 1000) + 360,
       messages: [
         {
           address: "UQAPhkqLn3j7vfVwriUDNlGWBW7x4LsuqgfWO8u_wHObTMSq",
-          amount: TonWeb.utils.toNano(tonAmount.toString()).toString(),
+          amount: TonWeb.utils.toNano(tonAmount).toString(),
           payload: TonWeb.utils.bytesToBase64(
-            new TextEncoder().encode(`Buy OHC for ${amountKES} KSH`)
+            new TextEncoder().encode(`Buy ${ohcAmount} OHC for ${kshAmount} KSH`)
           )
         }
       ]
     };
 
-    // send transaction and capture the result
     const txResult = await tonConnectUI.sendTransaction(transaction);
-
-    // extract transaction hash (Boc)
     const txHash = txResult?.boc || null;
 
     if (!txHash) {
-      return alert("Transaction failed: no hash returned.");
+      alert("Transaction failed: no hash returned.");
+      return;
     }
 
-    // after payment succeeds update backend
-    const res = await fetch('/api/confirm-buy', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({
-        userId: currentUser.id,
-        kshAmount: amountKES,
-        txHash: txHash
-      })
-    });
+const res = await fetch('/api/confirm-buy', {
+  method: 'POST',
+  headers: getAuthHeaders(),
+  body: JSON.stringify({
+    kshAmount: kshAmount,
+    txHash: txHash
+  })
+});
 
     const data = await res.json();
 
-    if (!data.success) {
-      return alert(data.error || 'Purchase update failed');
+    if (!res.ok || !data.success) {
+      alert(data.error || 'Could not confirm purchase');
+      return;
     }
 
     await refreshUserData();
-    await loadEarlyPage();
+    updateDisplays();
+    loadProfile();
+    loadEarlyPage();
 
-    alert(`🎉 Successfully bought OHC worth ${amountKES} KSH!`);
+    document.getElementById('buy-amount').value = '';
+    updateEarlyBuyPreview();
 
+    alert(`Success! You bought ${ohcAmount} OHC.`);
   } catch (err) {
-
     console.error(err);
     alert('Transaction cancelled or failed.');
+  }
+}
 
+async function startTelegramVerification() {
+  if (!currentUser) {
+    alert('Please login first');
+    return;
   }
 
+  const telegramUsername = document.getElementById('telegram-username').value.trim();
+
+  if (!telegramUsername) {
+    alert('Please enter your Telegram username');
+    return;
+  }
+
+  try {
+const res = await fetch('/api/telegram/start', {
+  method: 'POST',
+  headers: getAuthHeaders(),
+  body: JSON.stringify({
+    telegramUsername
+  })
+});
+
+    const data = await res.json();
+
+    if (!res.ok || !data.success) {
+      throw new Error(data.error || 'Failed to start verification');
+    }
+
+    document.getElementById('telegram-code').textContent = data.code;
+    document.getElementById('telegram-status').innerHTML =
+      `<span class="theme-accent-text text-blue-300">Verification started. Send this code to the Telegram bot or admin.</span>`;
+  } catch (err) {
+    document.getElementById('telegram-status').innerHTML =
+      `<span class="text-red-400">${err.message}</span>`;
+  }
 }
+
+async function completeTelegramReward() {
+  if (!currentUser) {
+    alert('Please login first');
+    return;
+  }
+
+  try {
+const res = await fetch('/api/telegram/complete', {
+  method: 'POST',
+  headers: getAuthHeaders(),
+  body: JSON.stringify({})
+});
+
+    const data = await res.json();
+
+    if (!res.ok || !data.success) {
+      throw new Error(data.error || 'Failed to claim Telegram reward');
+    }
+
+    currentUser.ohc_balance = data.ohc_balance;
+    currentUser.reward_ohc = data.reward_ohc;
+    localStorage.setItem('ohcUser', JSON.stringify(currentUser));
+
+    document.getElementById('telegram-status').innerHTML =
+      `<span class="text-green-400">${data.message}</span>`;
+
+    await refreshUserData();
+    updateDisplays();
+    loadProfile();
+  } catch (err) {
+    document.getElementById('telegram-status').innerHTML =
+      `<span class="text-red-400">${err.message}</span>`;
+  }
+}
+
     // Profile page
     function loadProfile() {
       const joined = new Date(currentUser.joined_at).toLocaleDateString();
@@ -826,183 +1357,284 @@ async function buyEarly() {
       document.getElementById('profile-mining').textContent = miningStr;
       document.getElementById('profile-level').textContent = lvl.name;
       document.getElementById('profile-referrals').textContent = currentUser.referrals;
-      document.getElementById('profile-bought').textContent = (currentUser.bought_coins || 0).toLocaleString();
+      document.getElementById('profile-bought').textContent = (currentUser.ohc_balance || currentUser.bought_coins || 0).toLocaleString();
+      document.getElementById('profile-claimed').textContent = (currentUser.claimed_ohc || 0).toLocaleString();
       document.getElementById('profile-joined').textContent = joined;
     }
 
     // Change password
-    async function changePassword() {
-      const newPass = document.getElementById('new-password').value;
-      const statusEl = document.getElementById('password-status');
-      
-      if (!newPass) {
-        statusEl.innerHTML = '<span class="text-red-400">Please enter a password</span>';
-        return;
-      }
+async function changePassword() {
+  const oldPassword = document.getElementById('old-password').value;
+  const newPass = document.getElementById('new-password').value;
+  const statusEl = document.getElementById('password-status');
 
-      if (!/[A-Z]/.test(newPass) || (newPass.match(/\d/g) || []).length < 2 || newPass.length < 8) {
-        statusEl.innerHTML = '<span class="text-red-400">Password needs 1 uppercase, 2 numbers, 8+ chars</span>';
-        return;
-      }
+  if (!oldPassword || !newPass) {
+    statusEl.innerHTML = '<span class="text-red-400">Enter your current and new password</span>';
+    return;
+  }
 
-      try {
-        const res = await fetch('/api/change-password', {
-          method: 'POST',
-          headers: {'Content-Type': 'application/json'},
-          body: JSON.stringify({ userId: currentUser.id, newPassword: newPass })
-        });
-        const data = await res.json();
-        
-        if (data.success) {
-          statusEl.innerHTML = '<span class="text-green-400">Password updated successfully!</span>';
-          document.getElementById('new-password').value = '';
-        } else {
-          statusEl.innerHTML = `<span class="text-red-400">${data.error}</span>`;
-        }
-      } catch (err) {
-        statusEl.innerHTML = '<span class="text-red-400">Error updating password</span>';
-      }
+  if (!/[A-Z]/.test(newPass) || (newPass.match(/\d/g) || []).length < 2 || newPass.length < 8) {
+    statusEl.innerHTML = '<span class="text-red-400">Password needs 1 uppercase, 2 numbers, 8+ chars</span>';
+    return;
+  }
+
+  try {
+    const res = await fetch('/api/change-password', {
+      method: 'POST',
+      headers: getAuthHeaders(),
+      body: JSON.stringify({
+        oldPassword,
+        newPassword: newPass
+      })
+    });
+
+    const data = await res.json();
+
+    if (data.success) {
+      statusEl.innerHTML = '<span class="text-green-400">Password updated successfully!</span>';
+      document.getElementById('old-password').value = '';
+      document.getElementById('new-password').value = '';
+    } else {
+      statusEl.innerHTML = `<span class="text-red-400">${data.error}</span>`;
     }
+  } catch (err) {
+    statusEl.innerHTML = '<span class="text-red-400">Error updating password</span>';
+  }
+}
 
     // Init
     window.onload = () => {
       // initialize TON Connect UI before any interaction
       initTonConnect();
+      applyLevelTheme();
       loadSavedUser();
     };
 
-    // Before closing tab - save last seconds
-    window.addEventListener('beforeunload', () => {
-      if (sessionSeconds > 0 && currentUser && timer) {
-        navigator.sendBeacon('/api/update-mining-beacon', JSON.stringify({ userId: currentUser.id, seconds: sessionSeconds }));
-      }
+// Before closing tab - save last seconds
+window.addEventListener('beforeunload', () => {
+  const token = localStorage.getItem('token');
+
+  if (sessionSeconds > 0 && currentUser && timer && token) {
+    fetch('/api/update-mining-beacon', {
+      method: 'POST',
+      headers: getAuthHeaders(),
+      body: JSON.stringify({ seconds: sessionSeconds }),
+      keepalive: true
     });
+  }
+});
   
     // (TON Connect globals and status handling are set up in initTonConnect above)
 
+async function startLevelUpgrade(fee, levelName) {
+  if (!currentUser) {
+    alert("Please login first!");
+    return;
+  }
 
-    // Load upgrade info when entering Levels page
-    async function loadUpgradeInfo() {
-      if (!currentUser) return;
+  if (!tonConnected) {
+    alert("Please connect TON wallet first!");
+    return;
+  }
 
-      const res = await fetch(`/api/next-level-fee/${currentUser.id}`);
-      const data = await res.json();
+  const amountKSH = parseFloat(fee);
+  if (!amountKSH || amountKSH <= 0) {
+    alert("Invalid level fee.");
+    return;
+  }
 
-      if (data.canUpgrade) {
-        document.getElementById('upgrade-section').classList.remove('hidden');
-        document.getElementById('current-paid').textContent = `${data.currentFeePaid} KSH`;
-        document.getElementById('next-fee').textContent = `${data.nextLevelFeeKSH} KSH`;
+  const rewardOHC = calculateDisplayedLevelReward(amountKSH);
 
-        document.getElementById('upgrade-btn').onclick = async () => {
-          if (!tonConnected) {
-            alert("Please connect TON wallet first!");
-            return;
-          }
+  const confirmUpgrade = confirm(
+    `Upgrade to ${levelName} for ${amountKSH} KSH?\n\n` +
+    `You will receive ${rewardOHC} OHC in your wallet (includes 50% bonus).`
+  );
 
-          const amountKSH = data.nextLevelFeeKSH;
-          const tonAmount = (amountKSH * 0.00015).toFixed(6); // rough conversion example!
+  if (!confirmUpgrade) return;
 
-          try {
-            const transaction = {
-              validUntil: Math.floor(Date.now() / 1000) + 360,
-              messages: [
-                {
-                  address: "UQAPhkqLn3j7vfVwriUDNlGWBW7x4LsuqgfWO8u_wHObTMSq",
-                  amount: TonWeb.utils.toNano(tonAmount).toString(), // in nanotons
-                  payload: TonWeb.utils.toBytes(`Upgrade to level for user ${currentUser.username}`)
-                }
-              ]
-            };
+  try {
+    const tonPriceKES = await getTonPriceKES();
+    const tonAmount = (amountKSH / tonPriceKES).toFixed(6);
 
-            document.getElementById('ton-status').textContent = 'Waiting for transaction...';
+    const transaction = {
+      validUntil: Math.floor(Date.now() / 1000) + 360,
+      messages: [
+        {
+          address: "UQAPhkqLn3j7vfVwriUDNlGWBW7x4LsuqgfWO8u_wHObTMSq",
+          amount: TonWeb.utils.toNano(tonAmount).toString(),
+          payload: TonWeb.utils.toBytes(
+            `Upgrade to ${levelName} for ${currentUser.username}`
+          )
+        }
+      ]
+    };
 
-            const txResult = await tonConnectUI.sendTransaction(transaction);
-            const txHash = txResult?.boc || null;
+    document.getElementById('ton-status').innerHTML =
+      `<span class="theme-accent-text text-blue-300">Waiting for transaction...</span>`;
 
-            // After success (user signed & sent) → tell backend
-            await fetch('/api/upgrade-level', {
-              method: 'POST',
-              headers: {'Content-Type': 'application/json'},
-              body: JSON.stringify({ userId: currentUser.id, paidKSH: amountKSH })
-            });
+    const txResult = await tonConnectUI.sendTransaction(transaction);
+    const txHash = txResult?.boc || null;
 
-            document.getElementById('ton-status').innerHTML = 
-              `<span class="text-green-400">Upgrade successful! Refresh page.</span>`;
+const upgradeRes = await fetch('/api/upgrade-level', {
+  method: 'POST',
+  headers: getAuthHeaders(),
+  body: JSON.stringify({
+    paidKSH: amountKSH,
+    txHash: txHash
+  })
+});
 
-            // Refresh user data & UI
-            await refreshUserData();
-            loadLevels();       // reload levels card
-            loadUpgradeInfo();  // hide or update upgrade section
+    const upgradeData = await upgradeRes.json();
 
-          } catch (err) {
-            console.error(err);
-            document.getElementById('ton-status').innerHTML = 
-              `<span class="text-red-400 text-sm md:text-base">Transaction failed or cancelled.</span>`;
-          }
-        };
-      } else {
-        document.getElementById('upgrade-section').classList.add('hidden');
-      }
+    if (!upgradeRes.ok || !upgradeData.success) {
+      throw new Error(upgradeData.error || 'Upgrade failed');
     }
 
-    // allow clicking any level row to trigger upgrade prompt
-    function triggerUpgradePrompt(fee, levelName) {
+    currentUser.membership_paid = upgradeData.membership_paid;
+    currentUser.ohc_balance = upgradeData.ohc_balance;
+    currentUser.reward_ohc = upgradeData.reward_ohc;
 
-      const confirmUpgrade = confirm(
-        `Upgrade directly to ${levelName} level for ${fee} KSH?`
-      );
+    localStorage.setItem('ohcUser', JSON.stringify(currentUser));
+    applyLevelTheme();
 
-      if (!confirmUpgrade) return;
+    document.getElementById('ton-status').innerHTML =
+      `<span class="text-green-400">${upgradeData.message}</span>`;
 
-      document.getElementById('next-fee').textContent = `${fee} KSH`;
+    await refreshUserData();
+    updateDisplays();
+    loadLevels();
+    loadUpgradeInfo();
+    loadProfile();
 
-      document.getElementById('upgrade-section').classList.remove('hidden');
+    selectedUpgrade = null;
 
-      document.getElementById('upgrade-btn').onclick = async () => {
+  } catch (err) {
+    console.error(err);
+    document.getElementById('ton-status').innerHTML =
+      `<span class="text-red-400">Transaction failed or was cancelled.</span>`;
+  }
+}
 
-        if (!tonConnected) {
-          alert("Please connect TON wallet first!");
-          return;
-        }
+// Load upgrade info when entering Levels page
+async function loadUpgradeInfo() {
+  if (!currentUser) return;
 
-        const amountKSH = fee;
-        const tonAmount = (amountKSH * 0.00015).toFixed(6);
+const res = await fetch('/api/next-level-fee', {
+  headers: getAuthHeaders(false)
+});
+  const data = await res.json();
 
-        try {
+  if (!data.canUpgrade) {
+    document.getElementById('upgrade-section').classList.add('hidden');
+    return;
+  }
 
-          const transaction = {
-            validUntil: Math.floor(Date.now() / 1000) + 360,
-            messages: [{
-              address: "UQAPhkqLn3j7vfVwriUDNlGWBW7x4LsuqgfWO8u_wHObTMSq",
-              amount: TonWeb.utils.toNano(tonAmount).toString(),
-              payload: TonWeb.utils.toBytes(
-                `Upgrade to ${levelName} for ${currentUser.username}`
-              )
-            }]
-          };
+  document.getElementById('upgrade-section').classList.remove('hidden');
 
-          const txResult = await tonConnectUI.sendTransaction(transaction);
+  document.getElementById('current-membership-label').textContent =
+    data.currentMembershipLevelNumber > 0
+      ? `Current Membership: Level ${data.currentMembershipLevelNumber} (${data.currentMembershipLevelName})`
+      : `Current Membership: Not Activated`;
 
-          await fetch('/api/upgrade-level', {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ userId: currentUser.id, paidKSH: amountKSH })
-          });
+  document.getElementById('current-paid').textContent = `${data.currentFeePaid} KSH`;
 
-          await refreshUserData();
-          loadLevels();
-          loadUpgradeInfo();
+  document.getElementById('next-fee-label').textContent =
+    `Level ${data.nextLevelNumber} Fee (${data.nextLevelName})`;
 
-        } catch (err) {
+  document.getElementById('next-fee').textContent = `${data.nextLevelFeeKSH} KSH`;
 
-          console.error(err);
-          alert("Transaction cancelled or failed");
+  const reward = calculateDisplayedLevelReward(data.nextLevelFeeKSH);
+  document.getElementById('next-reward').textContent = `${reward} OHC`;
 
-        }
+  document.getElementById('referral-rank-label').textContent =
+    `Referral Rank: ${data.referralRankName}`;
 
-      };
+document.getElementById('theme-preview-label').textContent =
+  data.currentMembershipLevelNumber > 0
+    ? `Your ${data.currentMembershipLevelName} theme is active.`
+    : 'Activate Level 1 to unlock your first premium theme.';
 
+  selectedUpgrade = {
+    fee: data.nextLevelFeeKSH,
+    levelName: data.nextLevelName
+  };
+
+  document.getElementById('upgrade-btn').onclick = () => {
+    startLevelUpgrade(data.nextLevelFeeKSH, data.nextLevelName);
+  };
+}
+
+// Allow clicking any level row to trigger upgrade prompt
+function triggerUpgradePrompt(fee, levelName) {
+  const reward = calculateDisplayedLevelReward(fee);
+
+  selectedUpgrade = { fee, levelName };
+
+  document.getElementById('upgrade-section').classList.remove('hidden');
+  document.getElementById('next-fee-label').textContent = `Level Fee (${levelName})`;
+  document.getElementById('next-fee').textContent = `${fee} KSH`;
+  document.getElementById('next-reward').textContent = `${reward} OHC`;
+
+  document.getElementById('ton-status').innerHTML =
+    `<span class="theme-accent-text text-blue-300">Selected: ${levelName} — Fee ${fee} KSH — Reward ${reward} OHC</span>`;
+
+  document.getElementById('upgrade-section').scrollIntoView({ behavior: 'smooth' });
+
+  document.getElementById('upgrade-btn').onclick = () => {
+    startLevelUpgrade(fee, levelName);
+  };
+}
+
+async function loadActivityPage() {
+  await loadActivitySummary();
+  await loadActivityFeed();
+}
+
+async function loadActivitySummary() {
+  try {
+    const res = await fetch('/api/activity-summary/today');
+    const data = await res.json();
+
+    document.getElementById('upgrades-today').textContent = (data.upgradesToday || 0).toLocaleString();
+    document.getElementById('bought-today').textContent = (data.ohcBoughtToday || 0).toLocaleString();
+    document.getElementById('telegram-today').textContent = (data.telegramRewardsToday || 0).toLocaleString();
+  } catch (err) {
+    console.error('Failed to load activity summary:', err);
+  }
+}
+
+async function loadActivityFeed() {
+  try {
+    const res = await fetch('/api/activity-feed');
+    const rows = await res.json();
+
+    const list = document.getElementById('activity-list');
+
+    if (!rows || rows.length === 0) {
+      list.innerHTML = `<li class="text-center text-gray-400 py-8 text-lg">No activity yet.</li>`;
+      return;
     }
+
+    list.innerHTML = rows.map(row => {
+      const dateStr = new Date(row.created_at).toLocaleString([], {
+        month: 'short',
+        day: 'numeric',
+        hour: '2-digit',
+        minute: '2-digit'
+      });
+
+      return `
+        <li class="theme-panel bg-[#0a1428] p-4 md:p-5 rounded-xl md:rounded-2xl border border-blue-900/50 hover:border-blue-500/30 transition-colors">
+          <div class="text-base md:text-lg text-white font-semibold">${row.public_text}</div>
+          <div class="text-xs md:text-sm text-gray-400 mt-1">${dateStr}</div>
+        </li>
+      `;
+    }).join('');
+  } catch (err) {
+    console.error('Failed to load activity feed:', err);
+  }
+}
+
   </script>
 </body>
 </html>
